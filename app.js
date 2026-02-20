@@ -776,16 +776,16 @@ function buildReviewText(){
     else {
       lines.push(`■ 着物レンタル：有り`);
       const detail = items.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
-      lines.push(`  ┗${detail.join(", ")}`);
+      lines.push(`            ┗${detail.join(", ")}`);
     }
   }
 
   const isSet = String(a.planType || "").startsWith("セットプラン");
   if (!isSet) {
     if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio) {
-      lines.push(`■ プラン：写真館撮影\n  ┗${a.planStudio}`);
+      lines.push(`■ プラン：写真館撮影\n        ┗${a.planStudio}`);
     } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall) {
-      lines.push(`■ プラン：出張撮影\n  ┗${a.planOutcall}`);
+      lines.push(`■ プラン：出張撮影\n        ┗${a.planOutcall}`);
     } else {
       lines.push(`■ プラン：${a.planType || ""}`);
     }
@@ -795,18 +795,18 @@ function buildReviewText(){
     const studioItems = cleaned.filter(x => PLAN_STUDIO.includes(x));
     const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
     if (studioItems.length){
-      lines.push(`  ┗写真館撮影`);
-      studioItems.forEach(x => lines.push(`    ・${x}`));
+      lines.push(`        ┗写真館撮影`);
+      studioItems.forEach(x => lines.push(`          ・${x}`));
     }
     if (outcallItems.length){
-      lines.push(`  ┗出張撮影`);
-      outcallItems.forEach(x => lines.push(`    ・${x}`));
+      lines.push(`        ┗出張撮影`);
+      outcallItems.forEach(x => lines.push(`          ・${x}`));
     }
   }
 
   if (Array.isArray(a.options) && a.options.length) {
     lines.push(`■ パネル/アルバム：`);
-    a.options.forEach(x => lines.push(`  ${x}`));
+    a.options.forEach(x => lines.push(`     ${x}`));
   }
 
   return lines.join("\n");
@@ -973,3 +973,4 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
