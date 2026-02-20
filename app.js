@@ -4,7 +4,7 @@ const openedAtMs = Date.now();
  * ★ここをあなたの Apps Script WebアプリURL に差し替え
  * 例）https://script.google.com/macros/s/XXXXXXXXXXXX/exec
  */
-const API_URL = "https://script.google.com/macros/s/AKfycbzKqm_xJUsupI5te7GnY6sq6hYTLUblt4SUW2Q_5SG3gD8qCwHHq4OS309s4-p_sfKM/exec";
+const API_URL = "https://gas-proxy-1o3371yfh-shu0040s-projects.vercel.app/api/forms";
 
 window.addEventListener("error", (e) => {
   const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
@@ -563,6 +563,7 @@ state.answers.kimonoRental = items.includes("その他")
   }
 
 }
+
 
 
 
