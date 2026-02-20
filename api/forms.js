@@ -5,7 +5,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok:false, message:"GAS_URL is not set" });
   }
 
-  // ===== CORS =====
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -17,7 +16,6 @@ export default async function handler(req, res) {
   try {
     const url = new URL(GAS_URL);
 
-    // クエリを引き継ぐ（?action=config など）
     Object.entries(req.query || {}).forEach(([k,v])=>{
       url.searchParams.set(k,v);
     });
@@ -35,8 +33,7 @@ export default async function handler(req, res) {
     const text = await resp.text();
 
     try {
-      const json = JSON.parse(text);
-      return res.status(resp.status).json(json);
+      return res.status(resp.status).json(JSON.parse(text));
     } catch {
       return res.status(resp.status).send(text);
     }
