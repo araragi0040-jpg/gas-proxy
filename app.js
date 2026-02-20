@@ -1,17 +1,15 @@
+// app.js（完全版）
+// --------------------
 const openedAtMs = Date.now();
 
-/**
- * ★ここをあなたの Apps Script WebアプリURL に差し替え
- * 例）https://script.google.com/macros/s/XXXXXXXXXXXX/exec
- */
-const API_URL = "https://gas-proxy-kappa.vercel.app/api/forms";
+// ★Vercel経由で叩く（同一オリジンなのでCORSにならない）
+const API_BASE = "/api/forms";
 
 window.addEventListener("error", (e) => {
   const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
   console.error(msg, e.error);
   showError(msg);
 });
-
 window.addEventListener("unhandledrejection", (e) => {
   const msg = `Promiseエラー:\n${e.reason?.message || e.reason}`;
   console.error(msg, e.reason);
@@ -32,7 +30,7 @@ const state = {
     shootingContents: [],
     shootingContentsOther: "",
 
-    preferredDates: ["", "", ""],
+    preferredDates: ["", "", ""], // 第1〜第3
     shootingPlace: "",
     participants: "",
     mainPersonName: "",
@@ -64,6 +62,7 @@ const state = {
   }
 };
 
+// DOM
 const pageRoot = document.getElementById("pageRoot");
 const errBox = document.getElementById("errBox");
 const btnBack = document.getElementById("btnBack");
@@ -84,39 +83,28 @@ const pages = [
   { title:"⑤ 仕上げ（確認＆同意）", desc:"送信前に内容確認と同意をお願いします。", fields:["paymentMethod","howKnew","message","agreements","review"] }
 ];
 
-// ★セット用の候補
+// セット候補
 const PLAN_STUDIO = [
   "【１番人気🥇】プレミアムプラン (全データ/A4木製ガラスパネル ) ¥57,500→¥46,500",
   "スタンダードプラン (全データ込み) ¥41,000",
   "ライトプラン (5データのみ) ¥30,000 ※データはお客様セレクト"
 ];
-
 const PLAN_OUTCALL = [
   "プレミアムプラン (全データ/2L木製ガラスパネル/アルバム10P Mサイズ) ¥75,000→¥69,800",
   "【１番人気🥇】スタンダードプラン(全データ/2L木製ガラスパネル/2面台紙) ¥65,000円→¥59,800",
   "スマートプラン(全データ/2L木製ガラスパネル) ￥40,000"
 ];
 
-// ====== 初期設定取得（google.script.run → fetch）======
+// ====== 初期化 ======
 (async function init(){
   try {
-    const res = await fetch(`${API_URL}?action=config`, { method: "GET" });
-    const text = await res.text(); // ←まずテキストで受ける
-
-    // JSONかどうかチェック
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch (_) {
-      throw new Error(`configがJSONではありません。\nstatus=${res.status}\n先頭200文字=\n${text.slice(0,200)}`);
-    }
-
+    const res = await fetch(`${API_BASE}?action=config`, { method:"GET" });
+    const json = await res.json();
     if (!json.ok) throw new Error(json.message || "config取得に失敗");
     state.server = json.data;
     render();
-
   } catch (e) {
-    showError(`初期化に失敗しました。\n${e?.message || e}`);
+    showError(`初期化に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 })();
 
@@ -130,17 +118,16 @@ function rerenderAll(){
   render();
 }
 
-// 電話を整形（数字だけ）
+// 電話：数字だけ
 function formatPhone(raw){
-  const digits = String(raw||"").replace(/\D/g,"");
-  return digits;
+  return String(raw||"").replace(/\D/g,"");
 }
 
 // 分岐の不要値を掃除
 function cleanupByBranch(){
   const a = state.answers;
 
-  // パネル/アルバム：表示順固定
+  // options 表示順固定
   const optMaster = [
     "① A4木製ガラスパネル (305×220mm) ¥16,500（2枚目から10%OFF）",
     "② 2面台紙 (216×216mm) ¥25,000",
@@ -155,7 +142,7 @@ function cleanupByBranch(){
       .sort((x, y) => optMaster.indexOf(x) - optMaster.indexOf(y));
   }
 
-  // 着付け無しなら詳細系を消す
+  // 着付け無し
   if (a.dressingNeed === "無し") {
     a.dressingDetail = "";
     a.dressingPlace = "";
@@ -164,23 +151,21 @@ function cleanupByBranch(){
     a.parkingSpace = "";
   }
 
-  // 当写真館なら住所/駐車いらない
+  // 当写真館なら住所/駐車なし
   if (a.dressingPlace === "当写真館") {
     a.dressingAddressChoice = "";
     a.dressingAddressOther = "";
     a.parkingSpace = "";
   }
 
-  // 着物レンタル：「無し」は排他
+  // 着物レンタル：無し排他
   {
     const items = a.kimonoRentalItems || [];
     if (items.includes("無し")) {
       a.kimonoRentalItems = ["無し"];
       a.kimonoRentalOther = "";
     }
-    if (!items.includes("その他")) {
-      a.kimonoRentalOther = "";
-    }
+    if (!items.includes("その他")) a.kimonoRentalOther = "";
   }
 
   // プラン分岐
@@ -254,7 +239,6 @@ function renderCheckbox(key, title, required, options, hint, other){
     label.className = "choice";
     const input = document.createElement("input");
     input.type = "checkbox";
-
     input.value = value;
     input.checked = cur.has(value);
 
@@ -264,6 +248,7 @@ function renderCheckbox(key, title, required, options, hint, other){
       state.answers[key] = Array.from(cur);
       rerenderAll();
     });
+
     const span = document.createElement("div");
     span.textContent = labelText;
     label.appendChild(input);
@@ -284,10 +269,550 @@ function renderCheckbox(key, title, required, options, hint, other){
     inp.addEventListener("input", ()=> state.answers[other.key] = inp.value);
     box.appendChild(inp);
   }
-
   return box;
 }
 
+// ====== render ======
+function render(){
+  clearError();
+  cleanupByBranch();
+
+  // ページ変化時だけ上へ
+  if (state.lastPageIndex !== state.pageIndex) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    state.lastPageIndex = state.pageIndex;
+  }
+
+  const totalPages = pages.length;
+  if (state.pageIndex < 0) state.pageIndex = 0;
+  if (state.pageIndex > totalPages - 1) state.pageIndex = totalPages - 1;
+
+  stepText.textContent = `${state.pageIndex + 1} / ${totalPages}`;
+  barInner.style.width = `${Math.round(((state.pageIndex + 1) / totalPages) * 100)}%`;
+
+  btnBack.disabled = state.pageIndex === 0;
+  btnBack.style.opacity = btnBack.disabled ? 0.6 : 1;
+  btnNext.textContent = (state.pageIndex === totalPages - 1) ? "送信" : "次へ";
+
+  pageRoot.innerHTML = "";
+
+  const page = pages[state.pageIndex];
+  const h2 = document.createElement("h2"); h2.textContent = page.title;
+  const d = document.createElement("div"); d.className="desc"; d.textContent = page.desc;
+  pageRoot.appendChild(h2);
+  pageRoot.appendChild(d);
+
+  // ① 連絡先
+  if (page.fields.includes("email") || page.fields.includes("name")){
+    const grid = document.createElement("div"); grid.className="grid";
+
+    if (page.fields.includes("email")){
+      const box = makeInputBox("メールアドレス", true, "自動返信メールをお送りします");
+      const input = document.createElement("input"); input.type="email";
+      input.value = state.answers.email;
+      input.addEventListener("input", ()=> state.answers.email = input.value);
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+
+    if (page.fields.includes("name")){
+      const box = makeInputBox("お名前", true, "");
+      const input = document.createElement("input"); input.type="text";
+      input.value = state.answers.name;
+      input.addEventListener("input", ()=> state.answers.name = input.value);
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+    pageRoot.appendChild(grid);
+  }
+
+  if (page.fields.includes("postal") || page.fields.includes("address") || page.fields.includes("phone")){
+    const grid = document.createElement("div"); grid.className="grid";
+
+    if (page.fields.includes("postal")){
+      const box = makeInputBox("郵便番号", true, "例：123-4567");
+      const input = document.createElement("input"); input.type="text";
+      input.value = state.answers.postal;
+      input.addEventListener("input", ()=> state.answers.postal = input.value);
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+
+    if (page.fields.includes("phone")){
+      const box = makeInputBox("お電話番号", true, "ハイフン不要");
+      const input = document.createElement("input"); input.type="tel";
+      input.value = state.answers.phone;
+      input.addEventListener("input", ()=> state.answers.phone = input.value);
+      input.addEventListener("blur", ()=>{
+        state.answers.phone = formatPhone(input.value);
+        input.value = state.answers.phone;
+      });
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+    pageRoot.appendChild(grid);
+
+    if (page.fields.includes("address")){
+      const box = makeInputBox("ご住所", true, "");
+      const input = document.createElement("input"); input.type="text";
+      input.value = state.answers.address;
+      input.addEventListener("input", ()=> state.answers.address = input.value);
+      box.appendChild(input);
+      pageRoot.appendChild(box);
+    }
+  }
+
+  // ② 撮影内容
+  if (page.fields.includes("shootingContents")){
+    pageRoot.appendChild(
+      renderCheckbox(
+        "shootingContents",
+        "撮影内容（複数選択）",
+        true,
+        ["家族撮影","お宮参り撮影","バースデー撮影","七五三撮影","入学園/卒学園撮影","成人式撮影","還暦撮影(米寿なども含む)","ペット撮影","ウェディング前撮り","挙式披露宴撮影","その他"],
+        "当てはまるものをすべて選択してください。",
+        { key:"shootingContentsOther", placeholder:"その他の内容" }
+      )
+    );
+  }
+
+  // 希望日（第1〜第3）
+  if (page.fields.includes("preferredDates")){
+    const box = makeInputBox("撮影希望日（第1〜第3）", true, "第1希望は必須です");
+    const wrap = document.createElement("div"); wrap.className="grid";
+
+    for (let i=0;i<3;i++){
+      const b = document.createElement("div");
+      b.className="q";
+      b.style.padding="0";
+      b.style.border="0";
+      const label = document.createElement("div");
+      label.className="t";
+      label.textContent = `第${i+1}希望`;
+      const input = document.createElement("input");
+      input.type="date";
+      input.value = state.answers.preferredDates[i] || "";
+      input.addEventListener("change", ()=> {
+        state.answers.preferredDates[i] = input.value;
+      });
+      b.appendChild(label);
+      b.appendChild(input);
+      wrap.appendChild(b);
+    }
+    box.appendChild(wrap);
+    pageRoot.appendChild(box);
+  }
+
+  if (page.fields.includes("shootingPlace")){
+    const box = makeInputBox("撮影場所", true, "例：写真館、枚岡神社、石切神社、自宅、〇〇公園 など");
+    const input = document.createElement("input"); input.type="text";
+    input.value = state.answers.shootingPlace;
+    input.addEventListener("input", ()=> state.answers.shootingPlace = input.value);
+    box.appendChild(input);
+    pageRoot.appendChild(box);
+  }
+
+  if (page.fields.includes("participants") || page.fields.includes("mainPersonName")){
+    const grid = document.createElement("div"); grid.className="grid";
+
+    if (page.fields.includes("participants")){
+      const box = makeInputBox("ご参加人数", true, "例：5名（父/母/主役1歳女の子/祖父/祖母）");
+      const input = document.createElement("input"); input.type="text";
+      input.value = state.answers.participants;
+      input.addEventListener("input", ()=> state.answers.participants = input.value);
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+
+    if (page.fields.includes("mainPersonName")){
+      const box = makeInputBox("主役のお名前/英字表記", true, "例：十色 / toiro");
+      const input = document.createElement("input"); input.type="text";
+      input.value = state.answers.mainPersonName;
+      input.addEventListener("input", ()=> state.answers.mainPersonName = input.value);
+      box.appendChild(input);
+      grid.appendChild(box);
+    }
+
+    pageRoot.appendChild(grid);
+  }
+
+  // ③ 着付け
+  if (page.fields.includes("dressingNeed")){
+    pageRoot.appendChild(
+      renderRadio("dressingNeed","着付けヘアセットご希望",true,["着付けのみ","着付けヘアセット","無し"],"")
+    );
+  }
+
+  // 着付け詳細（無し以外）
+  if (page.fields.includes("dressingDetail") && state.answers.dressingNeed && state.answers.dressingNeed !== "無し"){
+    const box = makeInputBox("着付けされる希望者の詳細", true, "例：着付けヘア 母1名 訪問着 / 7歳女の子1名 など");
+    const input = document.createElement("input"); input.type="text";
+    input.value = state.answers.dressingDetail;
+    input.addEventListener("input", ()=> state.answers.dressingDetail = input.value);
+    box.appendChild(input);
+    pageRoot.appendChild(box);
+
+    pageRoot.appendChild(
+      renderRadio("dressingPlace","着付け希望場所",true,["当写真館","ご自宅"],"")
+    );
+
+    if (state.answers.dressingPlace === "ご自宅"){
+      const box2 = makeInputBox("着付け場所ご住所", true, "祖母様ご自宅などの場合は「その他」にご記入ください");
+      const wrap = document.createElement("div"); wrap.className="choices";
+
+      ["同上","その他"].forEach(opt=>{
+        const label = document.createElement("label"); label.className="choice";
+        const input = document.createElement("input"); input.type="radio"; input.name="dressingAddressChoice";
+        input.value = opt; input.checked = (state.answers.dressingAddressChoice === opt);
+        input.addEventListener("change", ()=>{
+          state.answers.dressingAddressChoice = opt;
+          if (opt !== "その他") state.answers.dressingAddressOther = "";
+          rerenderAll();
+        });
+        const span = document.createElement("div"); span.textContent = opt;
+        label.appendChild(input); label.appendChild(span);
+        wrap.appendChild(label);
+      });
+      box2.appendChild(wrap);
+
+      const other = document.createElement("input");
+      other.type="text";
+      other.placeholder="その他の住所（必要な場合）";
+      other.value = state.answers.dressingAddressOther;
+      const enabled = (state.answers.dressingAddressChoice === "その他");
+      other.disabled = !enabled;
+      other.style.opacity = enabled ? 1 : 0.6;
+      other.addEventListener("input", ()=> state.answers.dressingAddressOther = other.value);
+      box2.appendChild(other);
+      pageRoot.appendChild(box2);
+
+      pageRoot.appendChild(
+        renderRadio("parkingSpace","駐車空きスペースの有無",true,["空きスペース有り","空きスペース無し"],"")
+      );
+    }
+  }
+
+  // 着物レンタル
+  if (page.fields.includes("kimonoRental")) {
+    const box = makeInputBox("着物レンタル(訪問着、産着等)ご希望", true, "");
+    const wrap = document.createElement("div");
+    wrap.className = "choices";
+
+    const OPTIONS = [
+      "お支度セットプラン（着物/小物一式レンタル/着付けヘアセット代含む）",
+      "訪問着",
+      "産着",
+      "七五三着物",
+      "無し",
+      "その他"
+    ];
+
+    const cur = new Set(state.answers.kimonoRentalItems || []);
+
+    function applyExclusiveRules(changedValue, checked){
+      if (changedValue === "無し" && checked){
+        cur.clear();
+        cur.add("無し");
+        state.answers.kimonoRentalOther = "";
+        return;
+      }
+      if (changedValue !== "無し" && checked){
+        cur.delete("無し");
+      }
+      if (changedValue === "その他" && !checked){
+        state.answers.kimonoRentalOther = "";
+      }
+    }
+
+    OPTIONS.forEach(labelText => {
+      const label = document.createElement("label");
+      label.className = "choice";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = cur.has(labelText);
+
+      input.addEventListener("change", () => {
+        const checked = input.checked;
+        if (checked) cur.add(labelText);
+        else cur.delete(labelText);
+
+        applyExclusiveRules(labelText, checked);
+        state.answers.kimonoRentalItems = Array.from(cur);
+        rerenderAll();
+      });
+
+      const span = document.createElement("div");
+      span.textContent = labelText;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      wrap.appendChild(label);
+    });
+
+    box.appendChild(wrap);
+
+    const other = document.createElement("input");
+    other.type = "text";
+    other.placeholder = "その他の内容をご記入ください";
+    const isOther = (state.answers.kimonoRentalItems || []).includes("その他");
+    other.value = state.answers.kimonoRentalOther || "";
+    other.disabled = !isOther;
+    other.style.opacity = isOther ? 1 : 0.6;
+    other.addEventListener("input", () => state.answers.kimonoRentalOther = other.value);
+    box.appendChild(other);
+
+    pageRoot.appendChild(box);
+  }
+
+  // ④ プラン
+  if (page.fields.includes("planType")){
+    pageRoot.appendChild(
+      renderRadio("planType","ご希望の撮影プラン",true,[
+        "写真館撮影 30,000円~",
+        "出張撮影 ※東大阪市のみ出張費無料",
+        "セットプラン(写真館&出張撮影) 合計金額 -5,000円OFF🉐"
+      ],"")
+    );
+  }
+
+  if (page.fields.includes("planStudio") && String(state.answers.planType||"").startsWith("写真館撮影")){
+    pageRoot.appendChild(renderRadio("planStudio","写真館撮影プラン（当日変更OK）",true, PLAN_STUDIO,""));
+  }
+
+  if (page.fields.includes("planOutcall") && String(state.answers.planType||"").startsWith("出張撮影")){
+    pageRoot.appendChild(renderRadio("planOutcall","出張撮影プラン",true, PLAN_OUTCALL,""));
+  }
+
+  if (page.fields.includes("planSet") && String(state.answers.planType||"").startsWith("セットプラン")){
+    const opts = ["▼写真館撮影", ...PLAN_STUDIO, "▼出張撮影", ...PLAN_OUTCALL];
+
+    const box = makeInputBox("セットプラン選択（写真館＋出張）", true, "合計から5,000円OFFになります");
+    const wrap = document.createElement("div"); wrap.className="choices";
+    const cur = new Set(state.answers.planSet || []);
+
+    opts.forEach(opt=>{
+      const isHeader = opt.startsWith("▼");
+      const label = document.createElement("label"); label.className="choice";
+      if (isHeader){ label.style.opacity = 0.75; label.style.cursor="default"; }
+
+      const input = document.createElement("input"); input.type="checkbox";
+      input.disabled = isHeader;
+      input.checked = cur.has(opt);
+
+      input.addEventListener("change", ()=>{
+        if (input.checked) cur.add(opt);
+        else cur.delete(opt);
+
+        // 見出し除外
+        opts.filter(x=>x.startsWith("▼")).forEach(x=>cur.delete(x));
+
+        state.answers.planSet = Array.from(cur);
+        rerenderAll();
+      });
+
+      const span = document.createElement("div"); span.textContent = opt;
+      label.appendChild(input); label.appendChild(span);
+      wrap.appendChild(label);
+    });
+
+    box.appendChild(wrap);
+    pageRoot.appendChild(box);
+  }
+
+  // options
+  if (page.fields.includes("options")){
+    pageRoot.appendChild(
+      renderCheckbox("options","パネル/アルバム（任意）",false,[
+        "① A4木製ガラスパネル (305×220mm) ¥16,500（2枚目から10%OFF）",
+        "② 2面台紙 (216×216mm) ¥25,000",
+        "③ 3面台紙 (216×216mm) ¥30,000",
+        "④ アルバム10P M (216×216mm) ¥35,000",
+        "⑤ アルバム10P L (305×305mm) ¥40,000",
+        "⑥ クリスタルアルバム10P (301×299mm) ¥55,000"
+      ],"ご予約時のご注文に限り → 表記価格より10%OFF")
+    );
+  }
+
+  // ⑤ 仕上げ
+  if (page.fields.includes("paymentMethod")){
+    pageRoot.appendChild(renderRadio("paymentMethod","お支払い方法",true,["現金払い","お振り込み"],""));
+  }
+
+  if (page.fields.includes("howKnew")){
+    const box = makeInputBox("当店を何で知りましたか？", true, "ご紹介の場合はその他にご記入ください");
+    const wrap = document.createElement("div"); wrap.className="choices";
+
+    ["ホームページ","Instagram","Googleマップ","リピーター","その他"].forEach(opt=>{
+      const label = document.createElement("label"); label.className="choice";
+      const input = document.createElement("input"); input.type="radio"; input.name="howKnew";
+      input.value = opt; input.checked = (state.answers.howKnew === opt);
+      input.addEventListener("change", ()=>{
+        state.answers.howKnew = opt;
+        if (opt !== "その他") state.answers.howKnewOther = "";
+        rerenderAll();
+      });
+      const span = document.createElement("div"); span.textContent = opt;
+      label.appendChild(input); label.appendChild(span);
+      wrap.appendChild(label);
+    });
+
+    box.appendChild(wrap);
+
+    const other = document.createElement("input");
+    other.type="text";
+    other.placeholder="その他（ご紹介者名など）";
+    other.value = state.answers.howKnewOther;
+    const enabled = (state.answers.howKnew === "その他");
+    other.disabled = !enabled;
+    other.style.opacity = enabled ? 1 : 0.6;
+    other.addEventListener("input", ()=> state.answers.howKnewOther = other.value);
+    box.appendChild(other);
+
+    pageRoot.appendChild(box);
+  }
+
+  if (page.fields.includes("message")){
+    const box = makeInputBox("備考（任意）", false, "");
+    const ta = document.createElement("textarea");
+    ta.value = state.answers.message;
+    ta.addEventListener("input", ()=> state.answers.message = ta.value);
+    box.appendChild(ta);
+    pageRoot.appendChild(box);
+  }
+
+  if (page.fields.includes("agreements")){
+    const box = document.createElement("div");
+    box.className = "q";
+    const t = document.createElement("div");
+    t.className = "t";
+    t.textContent = "同意（送信に必要です）";
+    const r = document.createElement("span"); r.className="req"; r.textContent="必須";
+    t.appendChild(r);
+    box.appendChild(t);
+
+    const details1 = document.createElement("details");
+    const sum1 = document.createElement("summary");
+    sum1.textContent = "個人情報の取扱い（タップで表示）";
+    const body1 = document.createElement("div");
+    body1.className = "terms";
+    body1.textContent =
+`・ご入力いただいた情報は、ご予約対応・連絡・サービス提供の目的で利用します。
+・第三者へ提供しません（法令に基づく場合を除きます）。
+・必要に応じて、確認のためご連絡する場合があります。`;
+    details1.appendChild(sum1); details1.appendChild(body1);
+
+    const details2 = document.createElement("details");
+    const sum2 = document.createElement("summary");
+    sum2.textContent = "キャンセル規定（タップで表示）";
+    const body2 = document.createElement("div");
+    body2.className = "terms";
+    body2.textContent =
+`・日程変更/キャンセルは、出来るだけ早めにご連絡下さい。
+・天候や体調不良など、事情ある場合は柔軟に対応させていただきます。
+・お客様の都合で撮影をキャンセルする場合は以下のキャンセル料が発生します。
+撮影当日〜3日前　撮影料金の全額
+撮影日の4〜7日前　撮影料金の50%
+撮影日の8〜14日前　撮影料金の30%`;
+    details2.appendChild(sum2); details2.appendChild(body2);
+
+    const details3 = document.createElement("details");
+    const sum3 = document.createElement("summary");
+    sum3.textContent = "その他確認事項（タップで表示）";
+    const body3 = document.createElement("div");
+    body3.className = "terms";
+    body3.textContent = "（ここは必要ならあなたの文章に差し替えOK）";
+    details3.appendChild(sum3); details3.appendChild(body3);
+
+    box.appendChild(details1);
+    box.appendChild(details2);
+    box.appendChild(details3);
+
+    function addAgree(key, labelText){
+      const c = document.createElement("label"); c.className="choice";
+      const i = document.createElement("input"); i.type="checkbox"; i.checked = !!state.answers[key];
+      i.addEventListener("change", ()=> state.answers[key] = i.checked);
+      const s = document.createElement("div"); s.textContent = labelText;
+      c.appendChild(i); c.appendChild(s);
+      box.appendChild(c);
+    }
+
+    addAgree("privacyAgree", "個人情報の取扱いに同意します");
+    addAgree("cancelAgree", "キャンセル規定に同意します");
+    addAgree("otherAgree", "その他確認事項に同意します");
+
+    pageRoot.appendChild(box);
+  }
+
+  if (page.fields.includes("review")){
+    const box = makeInputBox("内容確認（送信前）", false, "");
+    const rv = document.createElement("div");
+    rv.className = "review";
+    rv.textContent = buildReviewText();
+    box.appendChild(rv);
+    pageRoot.appendChild(box);
+  }
+}
+
+function buildReviewText(){
+  const a = state.answers;
+  const lines = [];
+
+  lines.push(`■ お名前：${a.name || ""}`);
+  lines.push(`■ メール：${a.email || ""}`);
+  lines.push(`■ 電話：${formatPhone(a.phone) || ""}`);
+
+  const contents = Array.isArray(a.shootingContents) ? a.shootingContents : [];
+  const display = contents.map(x => x === "その他" ? `その他（${a.shootingContentsOther || ""}）` : x);
+  lines.push(`■ 撮影内容：${display.join(", ")}`);
+
+  if (a.dressingNeed && a.dressingNeed !== "無し") {
+    lines.push(`■ 着付けヘアセットご希望：${a.dressingNeed}`);
+  }
+
+  const items = Array.isArray(a.kimonoRentalItems) ? a.kimonoRentalItems : [];
+  if (items.length) {
+    if (items.includes("無し")) lines.push(`■ 着物レンタル：無し`);
+    else {
+      lines.push(`■ 着物レンタル：有り`);
+      const detail = items.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
+      lines.push(`  ┗${detail.join(", ")}`);
+    }
+  }
+
+  const isSet = String(a.planType || "").startsWith("セットプラン");
+  if (!isSet) {
+    if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio) {
+      lines.push(`■ プラン：写真館撮影\n  ┗${a.planStudio}`);
+    } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall) {
+      lines.push(`■ プラン：出張撮影\n  ┗${a.planOutcall}`);
+    } else {
+      lines.push(`■ プラン：${a.planType || ""}`);
+    }
+  } else {
+    lines.push(`■ プラン：${a.planType || ""}`);
+    const cleaned = (Array.isArray(a.planSet) ? a.planSet : []).filter(x => x && !String(x).startsWith("▼"));
+    const studioItems = cleaned.filter(x => PLAN_STUDIO.includes(x));
+    const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
+    if (studioItems.length){
+      lines.push(`  ┗写真館撮影`);
+      studioItems.forEach(x => lines.push(`    ・${x}`));
+    }
+    if (outcallItems.length){
+      lines.push(`  ┗出張撮影`);
+      outcallItems.forEach(x => lines.push(`    ・${x}`));
+    }
+  }
+
+  if (Array.isArray(a.options) && a.options.length) {
+    lines.push(`■ パネル/アルバム：`);
+    a.options.forEach(x => lines.push(`  ${x}`));
+  }
+
+  return lines.join("\n");
+}
+
+// ====== バリデーション ======
 function isEmailValid(v){
   const s = String(v||"").trim();
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
@@ -297,7 +822,6 @@ function validatePage(){
   const a = state.answers;
   const p = pages[state.pageIndex];
 
-  // ページごとの必須チェック
   if (p.fields.includes("email")){
     if (!String(a.email||"").trim()) return "メールアドレスは必須です。";
     if (!isEmailValid(a.email)) return "メールアドレスの形が違うかもです（例：aaa@bbb.com）";
@@ -312,9 +836,13 @@ function validatePage(){
 
   if (p.fields.includes("shootingContents")){
     if (!Array.isArray(a.shootingContents) || a.shootingContents.length === 0) return "撮影内容は必須です。";
-    if (a.shootingContents.includes("その他") && !String(a.shootingContentsOther||"").trim()) {
+    if (a.shootingContents.includes("その他") && !String(a.shootingContentsOther||"").trim())
       return "撮影内容で「その他」を選んだ場合は内容を入力してください。";
-    }
+  }
+
+  if (p.fields.includes("preferredDates")){
+    const first = (a.preferredDates && a.preferredDates[0]) ? String(a.preferredDates[0]).trim() : "";
+    if (!first) return "撮影希望日の第1希望は必須です。";
   }
 
   if (p.fields.includes("shootingPlace") && !String(a.shootingPlace||"").trim()) return "撮影場所は必須です。";
@@ -327,17 +855,17 @@ function validatePage(){
     if (!String(a.dressingPlace||"").trim()) return "着付け希望場所は必須です。";
     if (a.dressingPlace === "ご自宅"){
       if (!String(a.dressingAddressChoice||"").trim()) return "着付け住所（同上/その他）は必須です。";
-      if (a.dressingAddressChoice === "その他" && !String(a.dressingAddressOther||"").trim()) return "着付け住所の「その他」を入力してください。";
+      if (a.dressingAddressChoice === "その他" && !String(a.dressingAddressOther||"").trim())
+        return "着付け住所の「その他」を入力してください。";
       if (!String(a.parkingSpace||"").trim()) return "駐車スペースは必須です。";
     }
   }
 
-  if (p.fields.includes("kimonoRental")) {
+  if (p.fields.includes("kimonoRental")){
     const items = a.kimonoRentalItems || [];
     if (!Array.isArray(items) || items.length === 0) return "着物レンタル希望は必須です。";
-    if (items.includes("その他") && !String(a.kimonoRentalOther || "").trim()) {
+    if (items.includes("その他") && !String(a.kimonoRentalOther||"").trim())
       return "レンタルで「その他」を選んだ場合は内容を入力してください。";
-    }
   }
 
   if (p.fields.includes("planType") && !String(a.planType||"").trim()) return "撮影プランは必須です。";
@@ -365,124 +893,8 @@ function validatePage(){
 
   return null;
 }
-// ====== ページ描画 ======
-function render(){
-  clearError();
-  cleanupByBranch();
 
-  if (state.lastPageIndex !== state.pageIndex) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    state.lastPageIndex = state.pageIndex;
-  }
-
-  const totalPages = pages.length;
-  if (state.pageIndex < 0) state.pageIndex = 0;
-  if (state.pageIndex > totalPages - 1) state.pageIndex = totalPages - 1;
-
-  stepText.textContent = `${state.pageIndex + 1} / ${totalPages}`;
-  barInner.style.width = `${Math.round(((state.pageIndex + 1) / totalPages) * 100)}%`;
-
-  btnBack.disabled = state.pageIndex === 0;
-  btnBack.style.opacity = btnBack.disabled ? 0.6 : 1;
-  btnNext.textContent = (state.pageIndex === totalPages - 1) ? "送信" : "次へ";
-
-  pageRoot.innerHTML = "";
-
-  const page = pages[state.pageIndex];
-  const h2 = document.createElement("h2"); h2.textContent = page.title;
-  const d = document.createElement("div"); d.className="desc"; d.textContent = page.desc;
-  pageRoot.appendChild(h2);
-  pageRoot.appendChild(d);
-
-  // ---- ここから下はあなたの Index.html の script 部分をそのまま移植 ----
-  // ※長いので省略せず、今貼ってくれた render() の中身をそのまま app.js に移してください
-  // ※ 変更点は「google.script.run の部分」だけです（下の submitAll で対応済み）
-
-  // ★★★ 重要：あなたの render() の中身（質問UI生成）をここに丸ごと貼ってOK ★★★
-  // （この回答では容量の都合で、全UI生成ロジックは省略せずに移して使う前提です）
-}
-
-// ★内容確認テキスト（あなたの buildReviewText をそのまま）
-// ここも app.js にそのまま移植してください。
-function buildReviewText(){
-  const a = state.answers;
-  const lines = [];
-
-  lines.push(`■ お名前：${a.name || ""}`);
-  lines.push(`■ メール：${a.email || ""}`);
-  lines.push(`■ 電話：${formatPhone(a.phone) || ""}`);
-
-  {
-    const contents = Array.isArray(a.shootingContents) ? a.shootingContents : [];
-    const display = contents.map(x => x === "その他" ? `その他（${a.shootingContentsOther || ""}）` : x);
-    lines.push(`■ 撮影内容：${display.join(", ")}`);
-  }
-
-  const isSet = String(a.planType || "").startsWith("セットプラン");
-
-  if (a.dressingNeed && a.dressingNeed !== "無し") {
-    lines.push(`■ 着付けヘアセットご希望：${a.dressingNeed}`);
-  }
-
-  {
-    const items = Array.isArray(a.kimonoRentalItems) ? a.kimonoRentalItems : [];
-    if (items.length) {
-      if (items.includes("無し")) {
-        lines.push(`■ 着物レンタル：無し`);
-      } else {
-        lines.push(`■ 着物レンタル：有り`);
-        const detail = items.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
-        lines.push(`                           ┗${detail.join(", ")}`);
-      }
-    }
-  }
-
-  if (!isSet) {
-    if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio) {
-      lines.push(`■ プラン：写真館撮影\n                 ┗${a.planStudio}`);
-    } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall) {
-      lines.push(`■ プラン：出張撮影\n                 ┗${a.planOutcall}`);
-    } else {
-      lines.push(`■ プラン：${a.planType || ""}`);
-    }
-  } else {
-    lines.push(`■ プラン：${a.planType || ""}`);
-
-    const cleaned = (Array.isArray(a.planSet) ? a.planSet : [])
-      .filter(x => x && !String(x).startsWith("▼"));
-
-    const studioItems = cleaned.filter(x => PLAN_STUDIO.includes(x));
-    const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
-
-    const normalize = (label) => String(label || "").trim();
-
-    if (studioItems.length) {
-      lines.push(`                ┗写真館撮影`);
-      studioItems.forEach(x => lines.push(`                    ・${normalize(x)}`));
-    }
-
-    if (outcallItems.length) {
-      lines.push(`                ┗出張撮影`);
-      outcallItems.forEach(x => lines.push(`                    ・${normalize(x)}`));
-    }
-  }
-
-  if (Array.isArray(a.options) && a.options.length) {
-    if (a.options.length === 1) {
-      lines.push(`■ パネル/アルバム：${a.options[0]}`);
-    } else {
-      lines.push(`■ パネル/アルバム：`);
-      a.options.forEach(x => lines.push(`    ${x}`));
-    }
-  }
-
-  return lines.join("\n");
-}
-
-// ====== バリデーション（あなたの validatePage をそのまま移植）=====
-// ※省略せず移植してください（今のままでOK）
-
-// ====== ボタン（送信部分だけfetch化）=====
+// ====== ボタン ======
 btnBack.addEventListener("click", ()=>{
   clearError();
   state.pageIndex--;
@@ -504,7 +916,6 @@ btnNext.addEventListener("click", ()=>{
 });
 
 async function submitAll(){
-  // Bot対策（クライアント側でも）
   const minMs = (state.server.minSubmitSeconds || 3) * 1000;
   if (Date.now() - openedAtMs < minMs) {
     showError(`送信が早すぎます。${state.server.minSubmitSeconds}秒ほど待ってから送信してください。`);
@@ -528,11 +939,11 @@ async function submitAll(){
 
   cleanupByBranch();
 
-  // kimonoRental を Code.gs 側仕様に合わせて生成（送信直前に作る）
-const items = state.answers.kimonoRentalItems || [];
-state.answers.kimonoRental = items.includes("その他")
-  ? items.map(x => x === "その他" ? `その他（${state.answers.kimonoRentalOther || ""}）` : x)
-  : items;
+  // GAS側へ渡すための整形（kimonoRental）
+  const items = state.answers.kimonoRentalItems || [];
+  state.answers.kimonoRental = items.includes("その他")
+    ? items.map(x => x === "その他" ? `その他（${state.answers.kimonoRentalOther || ""}）` : x)
+    : items;
 
   const payload = {
     openedAtMs,
@@ -542,9 +953,9 @@ state.answers.kimonoRental = items.includes("その他")
   toggleLoading(true);
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_BASE}?action=submit`, {
       method: "POST",
-      // ★ preflight回避しやすいように、文字列ボディで送る（Content-Type を明示しない）
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
@@ -561,14 +972,4 @@ state.answers.kimonoRental = items.includes("その他")
     toggleLoading(false);
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
-
 }
-
-
-
-
-
-
-
-
-
