@@ -376,33 +376,6 @@ function render(){
     );
   }
 
-  // 希望日（第1〜第3）
-  if (page.fields.includes("preferredDates")){
-    const box = makeInputBox("撮影希望日（第1〜第3）", true, "第1希望は必須です");
-    const wrap = document.createElement("div"); wrap.className="grid";
-
-    for (let i=0;i<3;i++){
-      const b = document.createElement("div");
-      b.className="q";
-      b.style.padding="0";
-      b.style.border="0";
-      const label = document.createElement("div");
-      label.className="t";
-      label.textContent = `第${i+1}希望`;
-      const input = document.createElement("input");
-      input.type="date";
-      input.value = state.answers.preferredDates[i] || "";
-      input.addEventListener("change", ()=> {
-        state.answers.preferredDates[i] = input.value;
-      });
-      b.appendChild(label);
-      b.appendChild(input);
-      wrap.appendChild(b);
-    }
-    box.appendChild(wrap);
-    pageRoot.appendChild(box);
-  }
-
   if (page.fields.includes("shootingPlace")){
     const box = makeInputBox("撮影場所", true, "例：写真館、枚岡神社、石切神社、自宅、〇〇公園 など");
     const input = document.createElement("input"); input.type="text";
@@ -812,6 +785,122 @@ function buildReviewText(){
   return lines.join("\n");
 }
 
+// レビューHTML
+function esc(s){
+  return String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#39;");
+}
+
+function buildReviewHTML(){
+  const a = state.answers;
+
+  const items = [];
+
+  // 連絡先
+  items.push(rowL1("お名前", a.name));
+  items.push(rowL1("メール", a.email));
+  items.push(rowL1("電話", formatPhone(a.phone)));
+
+  // 撮影内容
+  {
+    const contents = Array.isArray(a.shootingContents) ? a.shootingContents : [];
+    const display = contents.map(x => x === "その他" ? `その他（${a.shootingContentsOther || ""}）` : x);
+    items.push(rowL1("撮影内容", display.join("、")));
+  }
+
+  // 着付け
+  if (a.dressingNeed && a.dressingNeed !== "無し"){
+    items.push(rowL1("着付けヘアセットご希望", a.dressingNeed));
+  }
+
+  // 着物レンタル（★このブロックが画像の1つ目の対象）
+  {
+    const r = Array.isArray(a.kimonoRentalItems) ? a.kimonoRentalItems : [];
+    if (r.length){
+      if (r.includes("無し")){
+        items.push(rowL1("着物レンタル", "無し"));
+      } else {
+        items.push(rowL1("着物レンタル", "有り"));
+        const detail = r.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
+        items.push(rowL2(detail.join("、"))); // ← 子を L2 で固定インデント
+      }
+    }
+  }
+
+  // プラン（★画像の2つ目の対象）
+  const isSet = String(a.planType || "").startsWith("セットプラン");
+  if (!isSet){
+    if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio){
+      items.push(rowL1("プラン", "写真館撮影"));
+      items.push(rowL2(a.planStudio));
+    } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall){
+      items.push(rowL1("プラン", "出張撮影"));
+      items.push(rowL2(a.planOutcall));
+    } else {
+      items.push(rowL1("プラン", a.planType || ""));
+    }
+  } else {
+    items.push(rowL1("プラン", a.planType || ""));
+
+    const cleaned = (Array.isArray(a.planSet) ? a.planSet : [])
+      .filter(x => x && !String(x).startsWith("▼"));
+
+    const studioItems = cleaned.filter(x => PLAN_STUDIO.includes(x));
+    const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
+
+    if (studioItems.length){
+      items.push(rowL2("写真館撮影"));
+      studioItems.forEach(x => items.push(rowL3(x))); // ← 孫を L3
+    }
+    if (outcallItems.length){
+      items.push(rowL2("出張撮影"));
+      outcallItems.forEach(x => items.push(rowL3(x)));
+    }
+  }
+
+  // パネル/アルバム（★画像の3つ目の対象）
+  if (Array.isArray(a.options) && a.options.length){
+    items.push(rowL1("パネル/アルバム", ""));
+    a.options.forEach(x => items.push(rowL2(x))); // ← まとめて L2 に揃う
+  }
+
+  return `<div class="reviewList">${items.join("")}</div>`;
+}
+
+// レベル別行
+function rowL1(label, value){
+  return `
+    <div class="rv rv-l1">
+      <div class="rv-mark">■</div>
+      <div class="rv-body">
+        <div class="rv-label">${esc(label)}：</div>
+        <div class="rv-value">${esc(value)}</div>
+      </div>
+    </div>
+  `;
+}
+function rowL2(text){
+  return `
+    <div class="rv rv-l2">
+      <div class="rv-mark">┗</div>
+      <div class="rv-body">
+        <div class="rv-value">${esc(text)}</div>
+      </div>
+    </div>
+  `;
+}
+function rowL3(text){
+  return `
+    <div class="rv rv-l3">
+      <div class="rv-mark">・</div>
+      <div class="rv-body">
+        <div class="rv-value">${esc(text)}</div>
+      </div>
+    </div>
+  `;
+}
+
 // ====== バリデーション ======
 function isEmailValid(v){
   const s = String(v||"").trim();
@@ -973,4 +1062,5 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
