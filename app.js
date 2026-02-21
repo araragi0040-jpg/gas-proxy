@@ -414,8 +414,11 @@ function render(){
       renderRadio("dressingNeed","着付けヘアセットご希望",true,["着付けのみ","着付けヘアセット","無し"],"")
     );
 }
-    
-        function renderCalendarIfNoDressing(page){
+
+// ✅ 追加：カレンダーを差し込む（無しの時だけ中で表示される）
+renderCalendarIfNoDressing(page);
+
+  function renderCalendarIfNoDressing(page){
   // ===== Googleカレンダー表示（着付け無しの場合）=====
   if (
     page.fields.includes("dressingNeed") &&
@@ -567,7 +570,8 @@ function render(){
     box.appendChild(other);
 
     pageRoot.appendChild(box);
-
+}
+    
   // ④ プラン
   if (page.fields.includes("planType")){
     pageRoot.appendChild(
@@ -755,7 +759,6 @@ function render(){
     box.appendChild(rv);
     pageRoot.appendChild(box);
   }
-}
 
 function buildReviewText(){
   const a = state.answers;
@@ -1087,6 +1090,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
