@@ -344,7 +344,7 @@ details > summary{
 
 .rv-l1 .rv-label{
   display: inline;
-  margin-right: 0px;
+  margin-right: 6px;
 }
 
 .rv-l1 .rv-value{
@@ -371,6 +371,7 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
