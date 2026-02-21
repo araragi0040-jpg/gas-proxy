@@ -928,11 +928,6 @@ function validatePage(){
       return "撮影内容で「その他」を選んだ場合は内容を入力してください。";
   }
 
-  if (p.fields.includes("preferredDates")){
-    const first = (a.preferredDates && a.preferredDates[0]) ? String(a.preferredDates[0]).trim() : "";
-    if (!first) return "撮影希望日の第1希望は必須です。";
-  }
-
   if (p.fields.includes("shootingPlace") && !String(a.shootingPlace||"").trim()) return "撮影場所は必須です。";
   if (p.fields.includes("participants") && !String(a.participants||"").trim()) return "ご参加人数は必須です。";
   if (p.fields.includes("mainPersonName") && !String(a.mainPersonName||"").trim()) return "主役のお名前/英字表記は必須です。";
@@ -1061,6 +1056,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
