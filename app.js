@@ -273,12 +273,19 @@ function renderCheckbox(key, title, required, options, hint, other){
 
   // ===== Googleカレンダー表示（着付け無しの場合）=====
 function renderCalendarIfNoDressing(page){
+  
   if (page.fields.includes("dressingNeed") && state.answers.dressingNeed === "無し") {
-    const calBox = makeInputBox(
-      "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
-      false,
-      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
-    );
+//    const calBox = makeInputBox(
+//     "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
+//      false,
+//      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
+//    );
+        console.log("[cal] SHOW");
+    ...
+  } else {
+    console.log("[cal] SKIP");
+  }
+}
 
     const iframe = document.createElement("iframe");
     iframe.src = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true";
@@ -1082,6 +1089,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
