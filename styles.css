@@ -17,20 +17,13 @@
   --shadow: 0 10px 30px rgba(0,0,0,.08);
   --radius: 18px;
 
-  /* review indentation (ここが調整ポイント) */
-  --rv-indent-l1: 0px;   /* 親 */
-  --rv-indent-l2: 20px;  /* 子（┗）←ここ増やすと右へ */
-  --rv-indent-l3: 25px;  /* 孫（・） */
-  --rv-mark-w: 0px;     /* 記号列の幅 */
-  --rv-label-w: 120px;   /* ラベル列の幅 */
+  /* ===== Review用（ここだけ触ればOK） ===== */
+  --gap: 10px;           /* ■ と本文の間隔 */
+  --markW: 16px;         /* 記号列（■/┗/・）の幅 */
+  --labelW: 120px;       /* 親行の「ラベル列」の幅（お名前/メール等） */
 
-  review用（Reviewが参照している変数名に合わせる） */
-  --gap: 10px;
-  --markW: 16px;
-  --labelW: 120px;
-
-  --rv-indent-l2: 80px; /* ★ここで┗の右移動 */
-  --rv-indent-l3: 95px;
+  --rv-indent-l2: 80px;  /* ★子（┗）を右にずらす量 */
+  --rv-indent-l3: 95px;  /* ★孫（・）を右にずらす量 */
 }
 
 *{ box-sizing:border-box; }
@@ -304,7 +297,7 @@ details > summary{
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-  Review (ここが今回の本体)
+  Review
 ========================= */
 .review{
   background:#fff;
@@ -320,6 +313,7 @@ details > summary{
 
 .reviewList{ display:flex; flex-direction:column; gap:6px; }
 
+/* 1行（■/┗/・ + 本文） */
 .rv{
   display:flex;
   align-items:flex-start;
@@ -327,11 +321,13 @@ details > summary{
   line-height:1.65;
 }
 
+/* 記号列（■/┗/・） */
 .rv-mark{
   width: var(--markW);
   flex: 0 0 var(--markW);
 }
 
+/* 本文（ラベル + 値） */
 .rv-body{
   display:flex;
   gap:8px;
@@ -348,16 +344,17 @@ details > summary{
 .rv-value{
   flex:1;
   min-width:0;
-  word-break: break-word;   /* 長文でも折り返す */
+  word-break: break-word;
 }
 
-/* 親 */
-.rv-l1{ padding-left:0; }
+/* 親は左づめ（動かさない） */
+.rv-l1{ padding-left: 0; }
 
+/* 子・孫だけ右へ（ここをいじる） */
 .rv-l2{ padding-left: var(--rv-indent-l2); }
 .rv-l3{ padding-left: var(--rv-indent-l3); }
 
-/* 子行でラベルが空なら消す（セットプラン等の見た目安定用） */
+/* 子行はラベルが無いので消す（rowL2/rowL3用） */
 .rv-l2 .rv-label:empty{ display:none; }
 
 /* 追加 */
@@ -365,5 +362,3 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
-
-
