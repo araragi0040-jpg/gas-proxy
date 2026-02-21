@@ -20,7 +20,7 @@
   /* ===== Review用（ここだけ触ればOK） ===== */
   --gap: 10px;           /* ■ と本文の間隔 */
   --markW: 16px;         /* 記号列（■/┗/・）の幅 */
-  --labelW: 70px;       /* 親行の「ラベル列」の幅（お名前/メール等の左側） */
+  --labelW: 120px;       /* 親行の「ラベル列」の幅（お名前/メール等） */
 
   --rv-indent-l2: 80px;  /* ★子（┗）を右にずらす量 */
   --rv-indent-l3: 95px;  /* ★孫（・）を右にずらす量 */
@@ -330,13 +330,13 @@ details > summary{
 /* 本文（ラベル + 値） */
 .rv-body{
   display:flex;
-  gap:4px;
+  gap:8px;
   flex-wrap:wrap;
 }
 
 .rv-label{
-  width: auto;
-  flex: 0 0 auto;
+  width: var(--labelW);
+  flex: 0 0 var(--labelW);
   font-weight:700;
   white-space:nowrap;
 }
@@ -362,5 +362,3 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
-
-
