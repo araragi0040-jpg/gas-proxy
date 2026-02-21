@@ -337,9 +337,19 @@ details > summary{
   word-break: break-word;   /* 長文でも折り返す */
 }
 
-/* 親 */
-.rv-l1 .rv-body{ gap: 0; }
-.rv-l1 .rv-label{ margin-right: 0px; }
+/* 親だけは普通の文章にする（ズレが絶対出ない） */
+.rv-l1 .rv-body{
+  display: block;
+}
+
+.rv-l1 .rv-label{
+  display: inline;
+  margin-right: 6px;
+}
+
+.rv-l1 .rv-value{
+  display: inline;
+}
 
 :root{
    --gap: 10px;
@@ -361,6 +371,7 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
