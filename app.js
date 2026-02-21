@@ -30,7 +30,6 @@ const state = {
     shootingContents: [],
     shootingContentsOther: "",
 
-    preferredDates: ["", "", ""], // 第1〜第3
     shootingPlace: "",
     participants: "",
     mainPersonName: "",
@@ -1062,5 +1061,6 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
