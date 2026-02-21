@@ -76,7 +76,7 @@ const doneId = document.getElementById("doneId");
 // ====== ページ定義 ======
 const pages = [
   { title:"① 連絡先", desc:"ご連絡のために必要な情報です。", fields:["email","name","postal","address","phone"] },
-  { title:"② 撮影の基本", desc:"撮影内容とご希望を教えてください。", fields:["shootingContents","preferredDates","shootingPlace","participants","mainPersonName"] },
+  { title:"② 撮影の基本", desc:"撮影内容とご希望を教えてください。", fields:["shootingContents","shootingPlace","participants","mainPersonName"] },
   { title:"③ 着付け・レンタル", desc:"必要な場合だけ追加項目が出ます。", fields:["dressingNeed","dressingDetail","dressingPlace","dressingAddressChoice","parkingSpace","kimonoRental"] },
   { title:"④ プラン選択", desc:"プランを選ぶと、次の選択肢が出ます。", fields:["planType","planStudio","planOutcall","planSet","options"] },
   { title:"⑤ 仕上げ（確認＆同意）", desc:"送信前に内容確認と同意をお願いします。", fields:["paymentMethod","howKnew","message","agreements","review"] }
@@ -535,7 +535,38 @@ function render(){
     box.appendChild(other);
 
     pageRoot.appendChild(box);
+
+    function renderCalendarIfNoDressing(page){
+  // ===== Googleカレンダー表示（着付け無しの場合）=====
+  if (
+    page.fields.includes("dressingNeed") &&
+    state.answers.dressingNeed === "無し"
+  ) {
+    const calBox = makeInputBox(
+      "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
+      false,
+      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
+    );
+
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true";
+    iframe.style.border = "0";
+    iframe.style.width = "100%";
+    iframe.style.height = "600px";
+
+    calBox.appendChild(iframe);
+
+    // 保険リンク（表示崩れ対策）
+    const link = document.createElement("div");
+    link.className = "h";
+    link.innerHTML =
+      '表示がうまく出ない場合は <a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true" target="_blank" rel="noopener">こちら</a> からご確認ください。';
+
+    calBox.appendChild(link);
+
+    pageRoot.appendChild(calBox);
   }
+}
 
   // ④ プラン
   if (page.fields.includes("planType")){
@@ -1056,6 +1087,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
