@@ -326,9 +326,8 @@ details > summary{
 
 .rv-body{
   display:flex;
-  gap: var(--gap);
-  flex-wrap:nowrap;
-  min-width:0;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 .rv-label{
@@ -341,6 +340,7 @@ details > summary{
 .rv-value{
   flex:1;
   min-width:0;
+  word-break: break-word;   /* 長文でも折り返す */
 }
 
 /* 親 */
@@ -364,4 +364,5 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
