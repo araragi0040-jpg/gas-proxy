@@ -179,19 +179,20 @@ details > summary{
 
 .rv{ display:flex; align-items:flex-start; gap:10px; line-height:1.6; }
 .rv-mark{ width:16px; flex:0 0 16px; }        /* 記号の列を固定 */
-.rv-body{ display:flex; flex-wrap:wrap; gap:6px; }
 
-.rv-label{ font-weight:700; }
-.rv-value{ }
+.rv-body{ display:flex; flex-wrap:nowrap; gap:8px; }
+.rv-label{ font-weight:700; width:120px; flex:0 0 120px; } /* ←ここが肝 */
+.rv-value{ flex:1; min-width:0; }
 
 .rv-l1{ padding-left:0px; }                    /* 親 */
-.rv-l2{ padding-left:30px; }                   /* 子（┗） */
-.rv-l3{ padding-left:52px; }                   /* 孫（・） */
+.rv-l2{ padding-left:80px; }                   /* 子（┗） */
+.rv-l3{ padding-left:92px; }                   /* 孫（・） */
 
 /* 追加 */
 .underline {
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
