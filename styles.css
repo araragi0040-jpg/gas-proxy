@@ -19,9 +19,9 @@
 
   /* review indentation (ここが調整ポイント) */
   --rv-indent-l1: 0px;   /* 親 */
-  --rv-indent-l2: 30px;  /* 子（┗）←ここ増やすと右へ */
-  --rv-indent-l3: 35px;  /* 孫（・） */
-  --rv-mark-w: 16px;     /* 記号列の幅 */
+  --rv-indent-l2: 20px;  /* 子（┗）←ここ増やすと右へ */
+  --rv-indent-l3: 25px;  /* 孫（・） */
+  --rv-mark-w: 0px;     /* 記号列の幅 */
   --rv-label-w: 120px;   /* ラベル列の幅 */
 }
 
@@ -350,9 +350,3 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
-
-.rv-l2{
-  padding-left: 120px !important;
-  outline: 2px solid red;
-}
-
