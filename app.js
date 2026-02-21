@@ -678,6 +678,7 @@ renderCalendarIfNoDressing(page);
 
     pageRoot.appendChild(box);
   }
+  }
 
   if (page.fields.includes("message")){
     const box = makeInputBox("備考（任意）", false, "");
@@ -1090,6 +1091,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
