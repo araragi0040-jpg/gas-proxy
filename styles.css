@@ -17,12 +17,6 @@
   --shadow: 0 10px 30px rgba(0,0,0,.08);
   --radius: 18px;
 
-  /* review indentation (ここが調整ポイント) */
-  --rv-indent-l1: 0px;   /* 親 */
-  --rv-indent-l2: 20px;  /* 子（┗）←ここ増やすと右へ */
-  --rv-indent-l3: 25px;  /* 孫（・） */
-  --rv-mark-w: 0px;     /* 記号列の幅 */
-  --rv-label-w: 120px;   /* ラベル列の幅 */
 }
 
 *{ box-sizing:border-box; }
@@ -346,15 +340,17 @@ details > summary{
 /* 親 */
 .rv-l1{ padding-left:0; }
 
-/* 子（┗）は、親の value 開始位置まで一気に下げる */
-.rv-l2{
-  padding-left: 40px;
+:root{
+   --gap: 10px;
+  --markW: 16px;
+  --labelW: 120px;
+  
+  --rv-indent-l2: 80px; /* ←ここだけ触ればOKになる */
+  --rv-indent-l3: 95px;
 }
 
-/* 孫（・）は子より少しだけ右へ */
-.rv-l3{
-  padding-left: 45px;
-}
+.rv-l2{ padding-left: var(--rv-indent-l2); }
+.rv-l3{ padding-left: var(--rv-indent-l3); }
 
 /* 子行でラベルが空なら消す（セットプラン等の見た目安定用） */
 .rv-l2 .rv-label:empty{ display:none; }
@@ -364,6 +360,7 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
