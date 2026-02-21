@@ -188,11 +188,18 @@ details > summary{
 .rv-l2{ padding-left:80px; }                   /* 子（┗） */
 .rv-l3{ padding-left:92px; }                   /* 孫（・） */
 
+/* 「┗」(rv-mark) を “値の開始位置” に揃える */
+.rv-l2 .rv-mark{
+  margin-left: calc(16px + 10px + 140px); 
+  /* = rv-mark幅 + gap + rv-label幅 */
+}
+
 /* 追加 */
 .underline {
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
