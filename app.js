@@ -101,6 +101,7 @@ const PLAN_OUTCALL = [
     const json = await res.json();
     if (!json.ok) throw new Error(json.message || "config取得に失敗");
     state.server = json.data;
+    state.isReview = false;
     render();
   } catch (e) {
     showError(`初期化に失敗しました。\n${e && e.message ? e.message : e}`);
@@ -269,6 +270,93 @@ function renderCheckbox(key, title, required, options, hint, other){
     box.appendChild(inp);
   }
   return box;
+}
+
+function renderReviewScreen(){
+  // ここで「最終送信前の整形（kimonoRental）」と同じ整形を “表示用に” 行う
+  const answers = structuredClone(state.answers);
+
+  // kimonoRental 表示用整形（submitAllと同じ）
+  const items = answers.kimonoRentalItems || [];
+  answers.kimonoRental = items.includes("その他")
+    ? items.map(x => x === "その他" ? `その他（${answers.kimonoRentalOther || ""}）` : x)
+    : items;
+
+  // rows を作る（例：着物レンタル）
+  // ※ここはあなたのフォーム項目に合わせて増やしていける
+  const rows = [];
+
+  // 例：着物レンタル（親）
+  if (answers.kimonoRental && answers.kimonoRental.length){
+    rows.push({ level:1, mark:"■", label:"着物レンタル", value: "有り" });
+
+    // 子：選択肢を列挙（セットプラン等）
+    answers.kimonoRental.forEach(v=>{
+      rows.push({ level:2, mark:"┗", label:"", value: v });
+    });
+  } else if (answers.kimonoRental && typeof answers.kimonoRental === "string"){
+    // 文字列で来る場合もケア
+    rows.push({ level:1, mark:"■", label:"着物レンタル", value: answers.kimonoRental });
+  }
+
+  // 画面描画（pageRoot に差し込む想定）
+  pageRoot.innerHTML = `
+    <h2>内容確認</h2>
+    <p class="desc">送信前に内容をご確認ください。</p>
+
+    <div class="review">
+      <div class="reviewList">
+        ${rows.map(r => `
+          <div class="rv rv-l${r.level}">
+            <div class="rv-mark">${r.mark || ""}</div>
+            <div class="rv-body">
+              <div class="rv-label">${escapeHtml(r.label || "")}</div>
+              <div class="rv-value">${escapeHtml(r.value || "")}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+
+    <details>
+      <summary>利用規約・同意事項</summary>
+      <div class="terms">${escapeHtml(state.server?.termsText || "")}</div>
+    </details>
+
+    <label class="choice" style="margin-top:12px;">
+      <input type="checkbox" id="agreeChk" />
+      <div>上記内容を確認し、同意しました</div>
+    </label>
+
+    <div class="err" id="reviewErr" style="display:none;"></div>
+  `;
+
+  // 最終送信は「同意チェック必須」にする
+  // ※ btnNext は「確認画面中=送信」なので、ここでガードを付ける
+  const origSubmitAll = submitAll;
+  submitAll = async function(){
+    const agree = document.getElementById("agreeChk");
+    if (!agree || !agree.checked){
+      const box = document.getElementById("reviewErr");
+      if (box){
+        box.style.display = "block";
+        box.textContent = "送信には同意チェックが必要です。";
+      }
+      return;
+    }
+    // もとの submitAll を呼ぶ
+    submitAll = origSubmitAll;
+    return origSubmitAll();
+  };
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#39;");
 }
 
 // ====== render ======
@@ -1012,22 +1100,42 @@ function validatePage(){
 // ====== ボタン ======
 btnBack.addEventListener("click", ()=>{
   clearError();
+
+  // 確認画面中なら、確認画面を閉じて最終ページに戻る
+  if (state.isReview){
+    state.isReview = false;
+    render();
+    return;
+  }
+
   state.pageIndex--;
   render();
 });
 
 btnNext.addEventListener("click", ()=>{
   clearError();
+
+  // 確認画面中なら「送信」
+  if (state.isReview){
+    submitAll();
+    return;
+  }
+
   const msg = validatePage();
   if (msg) return showError(msg);
 
   const last = state.pageIndex === pages.length - 1;
-  if (!last){
-    state.pageIndex++;
+
+  // 最終ページなら「確認画面へ」
+  if (last){
+    state.isReview = true;
     render();
     return;
   }
-  submitAll();
+
+  // 通常は次へ
+  state.pageIndex++;
+  render();
 });
 
 async function submitAll(){
@@ -1088,6 +1196,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
