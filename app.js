@@ -413,7 +413,39 @@ function render(){
     pageRoot.appendChild(
       renderRadio("dressingNeed","着付けヘアセットご希望",true,["着付けのみ","着付けヘアセット","無し"],"")
     );
+}
+    
+        function renderCalendarIfNoDressing(page){
+  // ===== Googleカレンダー表示（着付け無しの場合）=====
+  if (
+    page.fields.includes("dressingNeed") &&
+    state.answers.dressingNeed === "無し"
+  ) {
+    const calBox = makeInputBox(
+      "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
+      false,
+      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
+    );
+    
+    const iframe = document.createElement("iframe");
+    iframe.src = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true";
+    iframe.style.border = "0";
+    iframe.style.width = "100%";
+    iframe.style.height = "600px";
+
+    calBox.appendChild(iframe);
+
+    // 保険リンク（表示崩れ対策）
+    const link = document.createElement("div");
+    link.className = "h";
+    link.innerHTML =
+      '表示がうまく出ない場合は <a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true" target="_blank" rel="noopener">こちら</a> からご確認ください。';
+
+    calBox.appendChild(link);
+
+    pageRoot.appendChild(calBox);
   }
+}
 
   // 着付け詳細（無し以外）
   if (page.fields.includes("dressingDetail") && state.answers.dressingNeed && state.answers.dressingNeed !== "無し"){
@@ -535,38 +567,6 @@ function render(){
     box.appendChild(other);
 
     pageRoot.appendChild(box);
-
-    function renderCalendarIfNoDressing(page){
-  // ===== Googleカレンダー表示（着付け無しの場合）=====
-  if (
-    page.fields.includes("dressingNeed") &&
-    state.answers.dressingNeed === "無し"
-  ) {
-    const calBox = makeInputBox(
-      "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
-      false,
-      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
-    );
-
-    const iframe = document.createElement("iframe");
-    iframe.src = "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true";
-    iframe.style.border = "0";
-    iframe.style.width = "100%";
-    iframe.style.height = "600px";
-
-    calBox.appendChild(iframe);
-
-    // 保険リンク（表示崩れ対策）
-    const link = document.createElement("div");
-    link.className = "h";
-    link.innerHTML =
-      '表示がうまく出ない場合は <a href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ2Q_wC0CzmcBHxXcfeMv3yPEdyCGsU1A3MtYt5cnkGSwM6d5MiHEjRs7pBUoGYVCp4kUR2HXvW-?gv=true" target="_blank" rel="noopener">こちら</a> からご確認ください。';
-
-    calBox.appendChild(link);
-
-    pageRoot.appendChild(calBox);
-  }
-}
 
   // ④ プラン
   if (page.fields.includes("planType")){
@@ -1087,6 +1087,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
