@@ -325,8 +325,8 @@ details > summary{
 }
 
 .rv-label{
-  width: var(--labelW);
-  flex: 0 0 var(--labelW);
+  width: auto;
+  flex: 0 0 auto;
   font-weight:700;
   white-space:nowrap;
 }
@@ -360,6 +360,7 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
