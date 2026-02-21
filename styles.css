@@ -353,7 +353,7 @@ details > summary{
 
 :root{
    --gap: 0px;
-  --markW: 0px;
+  --markW: 16px;
   --labelW: 120px;
   
   --rv-indent-l2: 80px; /* ←ここだけ触ればOKになる */
@@ -371,6 +371,7 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
 
