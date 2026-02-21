@@ -17,6 +17,20 @@
   --shadow: 0 10px 30px rgba(0,0,0,.08);
   --radius: 18px;
 
+  /* review indentation (ここが調整ポイント) */
+  --rv-indent-l1: 0px;   /* 親 */
+  --rv-indent-l2: 20px;  /* 子（┗）←ここ増やすと右へ */
+  --rv-indent-l3: 25px;  /* 孫（・） */
+  --rv-mark-w: 0px;     /* 記号列の幅 */
+  --rv-label-w: 120px;   /* ラベル列の幅 */
+
+  review用（Reviewが参照している変数名に合わせる） */
+  --gap: 10px;
+  --markW: 16px;
+  --labelW: 120px;
+
+  --rv-indent-l2: 80px; /* ★ここで┗の右移動 */
+  --rv-indent-l3: 95px;
 }
 
 *{ box-sizing:border-box; }
@@ -304,7 +318,7 @@ details > summary{
   white-space: pre-wrap;
 }
 
-.reviewList{ display:flex; flex-direction:column; gap:0px; }
+.reviewList{ display:flex; flex-direction:column; gap:6px; }
 
 .rv{
   display:flex;
@@ -320,13 +334,13 @@ details > summary{
 
 .rv-body{
   display:flex;
-  gap:0px;
+  gap:8px;
   flex-wrap:wrap;
 }
 
 .rv-label{
-  width: auto;
-  flex: 0 0 auto;
+  width: var(--labelW);
+  flex: 0 0 var(--labelW);
   font-weight:700;
   white-space:nowrap;
 }
@@ -337,28 +351,8 @@ details > summary{
   word-break: break-word;   /* 長文でも折り返す */
 }
 
-/* 親だけは普通の文章にする（ズレが絶対出ない） */
-.rv-l1 .rv-body{
-  display: block;
-}
-
-.rv-l1 .rv-label{
-  display: inline;
-  margin-right: 6px;
-}
-
-.rv-l1 .rv-value{
-  display: inline;
-}
-
-:root{
-   --gap: 10px;
-  --markW: 16px;
-  --labelW: 120px;
-  
-  --rv-indent-l2: 80px; /* ←ここだけ触ればOKになる */
-  --rv-indent-l3: 95px;
-}
+/* 親 */
+.rv-l1{ padding-left:0; }
 
 .rv-l2{ padding-left: var(--rv-indent-l2); }
 .rv-l3{ padding-left: var(--rv-indent-l3); }
@@ -371,17 +365,5 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
