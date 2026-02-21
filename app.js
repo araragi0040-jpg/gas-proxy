@@ -750,6 +750,7 @@ function render(){
     box.appendChild(rv);
     pageRoot.appendChild(box);
   }
+  }
 
 function buildReviewText(){
   const a = state.answers;
@@ -1081,6 +1082,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
