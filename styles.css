@@ -315,32 +315,46 @@ details > summary{
 .rv{
   display:flex;
   align-items:flex-start;
-  gap:10px;
-  line-height:1.6;
+  gap: var(--gap);
+  line-height:1.65;
 }
 
-/* 記号の列（■ / ┗ / ・ など） */
 .rv-mark{
-  width: var(--rv-mark-w);
-  flex: 0 0 var(--rv-mark-w);
+  width: var(--markW);
+  flex: 0 0 var(--markW);
 }
 
-/* ラベル＋値の横並び */
-.rv-body{ display:flex; flex-wrap:nowrap; gap:8px; }
+.rv-body{
+  display:flex;
+  gap: var(--gap);
+  flex-wrap:nowrap;
+  min-width:0;
+}
 
-/* ラベル列（ここが揃えの基準） */
 .rv-label{
+  width: var(--labelW);
+  flex: 0 0 var(--labelW);
   font-weight:700;
-  width: var(--rv-label-w);
-  flex: 0 0 var(--rv-label-w);
+  white-space:nowrap;
 }
 
-.rv-value{ flex:1; min-width:0; }
+.rv-value{
+  flex:1;
+  min-width:0;
+}
 
-/* 階層インデント */
-.rv-l1{ padding-left: var(--rv-indent-l1); }
-.rv-l2{ padding-left: var(--rv-indent-l2); } /* ←┗を右にしたいならここ */
-.rv-l3{ padding-left: var(--rv-indent-l3); }
+/* 親 */
+.rv-l1{ padding-left:0; }
+
+/* 子（┗）は、親の value 開始位置まで一気に下げる */
+.rv-l2{
+  padding-left: calc(var(--markW) + var(--gap) + var(--labelW) + var(--gap));
+}
+
+/* 孫（・）は子より少しだけ右へ */
+.rv-l3{
+  padding-left: calc(var(--markW) + var(--gap) + var(--labelW) + var(--gap) + 18px);
+}
 
 /* 子行でラベルが空なら消す（セットプラン等の見た目安定用） */
 .rv-l2 .rv-label:empty{ display:none; }
@@ -350,3 +364,4 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
