@@ -348,12 +348,12 @@ details > summary{
 
 /* 子（┗）は、親の value 開始位置まで一気に下げる */
 .rv-l2{
-  padding-left: calc(var(--markW) + var(--gap) + var(--labelW) + var(--gap));
+  padding-left: 40px;
 }
 
 /* 孫（・）は子より少しだけ右へ */
 .rv-l3{
-  padding-left: calc(var(--markW) + var(--gap) + var(--labelW) + var(--gap) + 18px);
+  padding-left: 45px;
 }
 
 /* 子行でラベルが空なら消す（セットプラン等の見た目安定用） */
@@ -364,5 +364,6 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
 
 
