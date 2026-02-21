@@ -837,13 +837,16 @@ if (page.fields.includes("dressingNeed")) {
   }
 
   if (page.fields.includes("review")){
-    const box = makeInputBox("内容確認（送信前）", false, "");
-    const rv = document.createElement("div");
-    rv.className = "review";
-    rv.textContent = buildReviewText();
-    box.appendChild(rv);
-    pageRoot.appendChild(box);
-  }
+  const box = makeInputBox("内容確認（送信前）", false, "");
+  const rv = document.createElement("div");
+  rv.className = "review";
+
+  // ★テキストじゃなくHTML版を使う
+  rv.innerHTML = buildReviewHTML();
+
+  box.appendChild(rv);
+  pageRoot.appendChild(box);
+}
   }
 
 function buildReviewText(){
@@ -1196,6 +1199,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
