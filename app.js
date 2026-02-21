@@ -447,7 +447,6 @@ if (page.fields.includes("dressingNeed")){
   pageRoot.appendChild(
     renderRadio("dressingNeed","着付けヘアセットご希望",true,["着付けのみ","着付けヘアセット","無し"],"")
   );
-}
 
 // ✅ カレンダー（着付け無しの時だけ）
 if (page.fields.includes("dressingNeed") && state.answers.dressingNeed === "無し") {
@@ -1115,6 +1114,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
