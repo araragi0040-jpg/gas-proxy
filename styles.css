@@ -185,12 +185,13 @@ details > summary{
 .rv-value{ }
 
 .rv-l1{ padding-left:0px; }                    /* 親 */
-.rv-l2{ padding-left:22px; }                   /* 子（┗） */
-.rv-l3{ padding-left:44px; }                   /* 孫（・） */
+.rv-l2{ padding-left:30px; }                   /* 子（┗） */
+.rv-l3{ padding-left:52px; }                   /* 孫（・） */
 
 /* 追加 */
 .underline {
   text-decoration: underline;
   font-weight: 800;
 }
+
 
