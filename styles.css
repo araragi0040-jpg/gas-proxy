@@ -175,8 +175,22 @@ details > summary{
   white-space: pre-wrap;
 }
 
+.reviewList{ display:flex; flex-direction:column; gap:6px; }
+
+.rv{ display:flex; align-items:flex-start; gap:10px; line-height:1.6; }
+.rv-mark{ width:16px; flex:0 0 16px; }        /* 記号の列を固定 */
+.rv-body{ display:flex; flex-wrap:wrap; gap:6px; }
+
+.rv-label{ font-weight:700; }
+.rv-value{ }
+
+.rv-l1{ padding-left:0px; }                    /* 親 */
+.rv-l2{ padding-left:22px; }                   /* 子（┗） */
+.rv-l3{ padding-left:44px; }                   /* 孫（・） */
+
 /* 追加 */
 .underline {
   text-decoration: underline;
   font-weight: 800;
 }
+
