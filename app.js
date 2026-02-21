@@ -841,7 +841,7 @@ if (page.fields.includes("dressingNeed")) {
   const rv = document.createElement("div");
   rv.className = "review";
 
-  // ★テキストじゃなくHTML版を使う
+  // ★ HTML版（.rv/.rv-l2 を生成する方）を使う
   rv.innerHTML = buildReviewHTML();
 
   box.appendChild(rv);
@@ -1199,6 +1199,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
