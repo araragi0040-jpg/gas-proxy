@@ -297,8 +297,9 @@ details > summary{
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-  Review
+  Review（全部左づめ）
 ========================= */
+
 .review{
   background:#fff;
   border: 1px solid var(--line);
@@ -311,54 +312,51 @@ details > summary{
   white-space: pre-wrap;
 }
 
-.reviewList{ display:flex; flex-direction:column; gap:6px; }
+.reviewList{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
 
-/* 1行（■/┗/・ + 本文） */
+/* 1行 */
 .rv{
   display:flex;
   align-items:flex-start;
-  gap: var(--gap);
+  gap:8px;
   line-height:1.65;
+  padding-left:0 !important;   /* ←強制左づめ */
 }
 
-/* 記号列（■/┗/・） */
+/* 記号（■/┗/・） */
 .rv-mark{
-  width: var(--markW);
-  flex: 0 0 var(--markW);
+  width:auto;
+  flex:0 0 auto;
 }
 
-/* 本文（ラベル + 値） */
+/* 本文 */
 .rv-body{
   display:flex;
-  gap:8px;
+  gap:6px;
   flex-wrap:wrap;
 }
 
+/* ラベル */
 .rv-label{
-  width: var(--labelW);
-  flex: 0 0 var(--labelW);
+  width:auto;
+  flex:0 0 auto;
   font-weight:700;
   white-space:nowrap;
 }
 
+/* 値 */
 .rv-value{
-  flex:1;
-  min-width:0;
+  flex:0 0 auto;
   word-break: break-word;
 }
 
-/* 親は左づめ（動かさない） */
-.rv-l1{ padding-left: 0; }
-
-/* 子・孫だけ右へ（ここをいじる） */
-.rv-l2{ padding-left: var(--rv-indent-l2); }
-.rv-l3{ padding-left: var(--rv-indent-l3); }
-
-/* 子行はラベルが無いので消す（rowL2/rowL3用） */
-.rv-l2 .rv-label:empty{ display:none; }
-
-/* 追加 */
-.underline{
-  text-decoration: underline;
-  font-weight: 800;
+/* 子・孫のインデント完全無効化 */
+.rv-l1,
+.rv-l2,
+.rv-l3{
+  padding-left:0 !important;
 }
