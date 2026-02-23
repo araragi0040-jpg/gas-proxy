@@ -330,7 +330,7 @@ details > summary{
 /* 本文（ラベル + 値） */
 .rv-body{
   display:flex;
-  gap:8px;
+  gap:4px;
   flex-wrap:wrap;
 }
 
@@ -362,3 +362,4 @@ details > summary{
   text-decoration: underline;
   font-weight: 800;
 }
+
