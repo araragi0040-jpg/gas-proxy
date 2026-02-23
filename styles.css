@@ -297,20 +297,8 @@ details > summary{
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-  Review（全部左づめ）
+   Review 完全左づめ
 ========================= */
-
-.review{
-  background:#fff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px;
-  margin-top: 10px;
-  color:#444;
-  font-size: 13px;
-  line-height: 1.7;
-  white-space: pre-wrap;
-}
 
 .reviewList{
   display:flex;
@@ -322,39 +310,40 @@ details > summary{
 .rv{
   display:flex;
   align-items:flex-start;
-  gap:8px;
-  line-height:1.65;
-  padding-left:0 !important;   /* ←強制左づめ */
+  gap:4px;              /* ←最小限の間隔 */
+  padding-left:0 !important;
 }
 
-/* 記号（■/┗/・） */
+/* 記号 */
 .rv-mark{
-  width:auto;
-  flex:0 0 auto;
+  width:auto !important;
+  flex:0 0 auto !important;
 }
 
 /* 本文 */
 .rv-body{
   display:flex;
-  gap:6px;
   flex-wrap:wrap;
+  gap:4px;              /* ←間隔縮小 */
 }
 
-/* ラベル */
+/* ラベル（←ここが原因） */
 .rv-label{
-  width:auto;
-  flex:0 0 auto;
+  width:auto !important;      /* 固定幅を完全解除 */
+  flex:0 0 auto !important;   /* 幅固定解除 */
+  margin:0 !important;
+  padding:0 !important;
   font-weight:700;
   white-space:nowrap;
 }
 
 /* 値 */
 .rv-value{
-  flex:0 0 auto;
-  word-break: break-word;
+  flex:0 0 auto !important;   /* 余計な伸縮を止める */
+  min-width:0;
 }
 
-/* 子・孫のインデント完全無効化 */
+/* 子孫のインデント無効 */
 .rv-l1,
 .rv-l2,
 .rv-l3{
