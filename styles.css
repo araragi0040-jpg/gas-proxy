@@ -349,3 +349,24 @@ details > summary{
 .rv-l3{
   padding-left:0 !important;
 }
+
+/* =========================
+   子・孫だけ右にずらす
+========================= */
+:root{
+  --rv-indent-l2: 28px;  /* ┗ の行をどれだけ右にずらすか */
+  --rv-indent-l3: 44px;  /* ・ の行をどれだけ右にずらすか（必要なら） */
+}
+
+/* 親は左のまま */
+.rv-l1{
+  padding-left: 0 !important;
+}
+
+/* 子・孫だけ右に */
+.rv-l2{
+  padding-left: var(--rv-indent-l2) !important;
+}
+.rv-l3{
+  padding-left: var(--rv-indent-l3) !important;
+}
