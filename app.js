@@ -986,11 +986,11 @@ function buildReviewHTML(){
     }
   }
 
-  // パネル/アルバム（★画像の3つ目の対象）
-  if (Array.isArray(a.options) && a.options.length){
-    items.push(rowL1("パネル/アルバム", ""));
-    a.options.forEach(x => items.push(rowL2(x))); // ← まとめて L2 に揃う
-  }
+// パネル/アルバム（┗を一切出さない）
+if (Array.isArray(a.options) && a.options.length){
+  items.push(rowL1("パネル/アルバム", ""));
+  a.options.forEach(x => items.push(rowL2NoMark(x, "panel"))); // ★全部┗なし
+}
 
   return `<div class="reviewList">${items.join("")}</div>`;
 }
@@ -1011,6 +1011,17 @@ function rowL2(text){
   return `
     <div class="rv rv-l2">
       <div class="rv-mark">┗</div>
+      <div class="rv-body">
+        <div class="rv-value">${esc(text)}</div>
+      </div>
+    </div>
+  `;
+}
+function rowL2NoMark(text, group){
+  const g = group ? ` grp-${group}` : "";
+  return `
+    <div class="rv rv-l2 rv-l2-nomark${g}">
+      <div class="rv-mark"></div>
       <div class="rv-body">
         <div class="rv-value">${esc(text)}</div>
       </div>
@@ -1204,6 +1215,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
