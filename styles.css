@@ -303,7 +303,6 @@ details > summary{
   display:flex;
   align-items:flex-start;
   gap:4px;              /* ←最小限の間隔 */
-  padding-left:0 !important;
 }
 
 /* 記号 */
@@ -340,6 +339,10 @@ details > summary{
   padding-left:0 !important;
 }
 
+/* デフォルト（グループ未指定の子孫） */
+.rv-l2{ padding-left: 28px; }
+.rv-l3{ padding-left: 44px; }
+
 /* =========================
    子・孫だけ右にずらす
 ========================= */
@@ -366,6 +369,7 @@ details > summary{
 /* パネル/アルバム（┗なし版もここで調整できる） */
 .rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
 
 
 
