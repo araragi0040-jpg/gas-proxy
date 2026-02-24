@@ -950,7 +950,7 @@ function buildReviewHTML(){
       } else {
         items.push(rowL1("着物レンタル", "有り"));
         const detail = r.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
-        items.push(rowL2(detail.join("、"))); // ← 子を L2 で固定インデント
+        items.push(rowL2(detail.join("、"), "kimono")); // ← 子を L2 で固定インデント
       }
     }
   }
@@ -960,10 +960,10 @@ function buildReviewHTML(){
   if (!isSet){
     if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio){
       items.push(rowL1("プラン", "写真館撮影"));
-      items.push(rowL2(a.planStudio));
+      items.push(rowL2(a.planStudio, "plan"));
     } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall){
       items.push(rowL1("プラン", "出張撮影"));
-      items.push(rowL2(a.planOutcall));
+      items.push(rowL2(a.planOutcall, "plan"));
     } else {
       items.push(rowL1("プラン", a.planType || ""));
     }
@@ -977,12 +977,12 @@ function buildReviewHTML(){
     const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
 
     if (studioItems.length){
-      items.push(rowL2("写真館撮影"));
-      studioItems.forEach(x => items.push(rowL3(x))); // ← 孫を L3
-    }
+      items.push(rowL2("写真館撮影", "plan"));
+studioItems.forEach(x => items.push(rowL3(x, "plan")));
+      }
     if (outcallItems.length){
-      items.push(rowL2("出張撮影"));
-      outcallItems.forEach(x => items.push(rowL3(x)));
+      items.push(rowL2("出張撮影", "plan"));
+outcallItems.forEach(x => items.push(rowL3(x, "plan")));
     }
   }
 
@@ -1007,9 +1007,10 @@ function rowL1(label, value){
     </div>
   `;
 }
-function rowL2(text){
+function rowL2(text, group){
+  const g = group ? ` grp-${group}` : "";
   return `
-    <div class="rv rv-l2">
+    <div class="rv rv-l2${g}">
       <div class="rv-mark">┗</div>
       <div class="rv-body">
         <div class="rv-value">${esc(text)}</div>
@@ -1028,9 +1029,10 @@ function rowL2NoMark(text, group){
     </div>
   `;
 }
-function rowL3(text){
+function rowL3(text, group){
+  const g = group ? ` grp-${group}` : "";
   return `
-    <div class="rv rv-l3">
+    <div class="rv rv-l3${g}">
       <div class="rv-mark">・</div>
       <div class="rv-body">
         <div class="rv-value">${esc(text)}</div>
@@ -1215,6 +1217,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
