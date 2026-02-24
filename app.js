@@ -1007,10 +1007,10 @@ function rowL1(label, value){
     </div>
   `;
 }
-function rowL2(text, group){
-  const g = group ? ` grp-${group}` : "";
+function rowL2(text, group = ""){
+  const grp = group ? ` grp-${group}` : "";
   return `
-    <div class="rv rv-l2${g}">
+    <div class="rv rv-l2${grp}">
       <div class="rv-mark">┗</div>
       <div class="rv-body">
         <div class="rv-value">${esc(text)}</div>
@@ -1029,10 +1029,10 @@ function rowL2NoMark(text, group){
     </div>
   `;
 }
-function rowL3(text, group){
-  const g = group ? ` grp-${group}` : "";
+function rowL3(text, group = ""){
+  const grp = group ? ` grp-${group}` : "";
   return `
-    <div class="rv rv-l3${g}">
+    <div class="rv rv-l3${grp}">
       <div class="rv-mark">・</div>
       <div class="rv-body">
         <div class="rv-value">${esc(text)}</div>
@@ -1217,6 +1217,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
