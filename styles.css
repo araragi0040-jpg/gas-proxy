@@ -354,20 +354,31 @@ details > summary{
    子・孫だけ右にずらす
 ========================= */
 :root{
-  --rv-indent-l2: 70px;  /* ┗ の行をどれだけ右にずらすか */
-  --rv-indent-l3: 75px;  /* ・ の行をどれだけ右にずらすか（必要なら） */
+  /* グループ別：子(┗) */
+  --indent-kimono-l2: 28px;
+  --indent-plan-l2:   40px;
+  --indent-panel-l2:  18px; /* ┗なしでも本文の左位置調整に使える */
+
+  /* グループ別：孫(・) */
+  --indent-kimono-l3: 44px;
+  --indent-plan-l3:   56px;
+  --indent-panel-l3:  34px;
 }
 
-/* 親は左のまま */
-.rv-l1{
-  padding-left: 0 !important;
-}
+/* 既定（どのグループでも） */
+.rv-l2{ padding-left: 28px; }
+.rv-l3{ padding-left: 44px; }
 
-/* 子・孫だけ右に */
-.rv-l2{
-  padding-left: var(--rv-indent-l2) !important;
-}
-.rv-l3{
-  padding-left: var(--rv-indent-l3) !important;
-}
+/* 着物レンタル */
+.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
+.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
+
+/* プラン */
+.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2); }
+.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3); }
+
+/* パネル/アルバム（┗なし版もここで調整できる） */
+.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
+.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
 
