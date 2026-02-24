@@ -348,7 +348,7 @@ details > summary{
 ========================= */
 :root{
   /* グループ別：子(┗) */
-  --indent-kimono-l2: 110px;
+  --indent-kimono-l2: 130px;
   --indent-plan-l2:   77px;
   --indent-panel-l2:  15px; /* ┗なしでも本文の左位置調整に使える */
 
@@ -369,6 +369,7 @@ details > summary{
 /* パネル/アルバム（┗なし版もここで調整できる） */
 .rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
 
 
 
