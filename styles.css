@@ -117,6 +117,17 @@ body{
 h2{ margin: 0 0 10px; font-size: 16px; }
 .desc{ color: var(--muted); font-size: 13px; margin: 0 0 12px; line-height: 1.6; }
 
+/* 内容確認：回答枠と店名 */
+.confirmAnswerBox{
+  margin-top: 12px; /* ①枠と②枠の間 */
+}
+
+.confirmBrand{
+  margin-top: 10px; /* ②枠と店名の間 */
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
 /* =========================
   Question blocks / Inputs
 ========================= */
@@ -369,5 +380,6 @@ details > summary{
 /* パネル/アルバム（┗なし版もここで調整できる） */
 .rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
 
 
