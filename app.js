@@ -836,10 +836,11 @@ if (page.fields.includes("dressingNeed")) {
     pageRoot.appendChild(box);
   }
 
-  if (page.fields.includes("review")){
-  // ① 内容確認（送信前）＋説明文：枠（q）として作る
-  const headerBox = makeInputBox("内容確認（送信前）", false, "");
+if (page.fields.includes("review")){
+  // 外枠（内容確認）
+  const outerBox = makeInputBox("内容確認（送信前）", false, "");
 
+  // 説明文
   const lead = document.createElement("div");
   lead.className = "h";
   lead.style.marginTop = "6px";
@@ -848,26 +849,28 @@ if (page.fields.includes("dressingNeed")) {
     下記がご入力内容ですので、ご確認ください。<br>
     確認後、改めて公式LINEよりご連絡いたします。
   `;
-  headerBox.appendChild(lead);
+  outerBox.appendChild(lead);
 
-  // ② 回答内容一覧：別枠（q）として作る
-  const answerBox = document.createElement("div");
-  answerBox.className = "q confirmAnswerBox";
+  // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+  // 内枠（回答内容一覧）
+  // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+  const innerBox = document.createElement("div");
+  innerBox.className = "confirmInnerBox";
 
   const rv = document.createElement("div");
   rv.className = "review";
-  rv.innerHTML = buildReviewHTML(); // ★回答一覧HTML
-  answerBox.appendChild(rv);
+  rv.innerHTML = buildReviewHTML();
 
-  // ③ 写真館名：枠の外（ただし同じページ内）
+  innerBox.appendChild(rv);
+  outerBox.appendChild(innerBox);
+
+  // 店名（外枠内）
   const brand = document.createElement("div");
   brand.className = "confirmBrand";
   brand.textContent = "写真館toiro";
+  outerBox.appendChild(brand);
 
-  // 追加順（ここが図の通り）
-  pageRoot.appendChild(headerBox);
-  pageRoot.appendChild(answerBox);
-  pageRoot.appendChild(brand);
+  pageRoot.appendChild(outerBox);
 }
 }
 
@@ -1234,6 +1237,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
