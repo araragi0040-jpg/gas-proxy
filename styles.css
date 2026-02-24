@@ -336,9 +336,7 @@ details > summary{
 }
 
 /* 子孫のインデント無効 */
-.rv-l1,
-.rv-l2,
-.rv-l3{
+.rv-l1{
   padding-left:0 !important;
 }
 
@@ -368,6 +366,7 @@ details > summary{
 /* パネル/アルバム（┗なし版もここで調整できる） */
 .rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
 
 
 
