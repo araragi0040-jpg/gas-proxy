@@ -837,20 +837,37 @@ if (page.fields.includes("dressingNeed")) {
   }
 
   if (page.fields.includes("review")){
-  const box = makeInputBox("内容確認（送信前）", false, "");
-  
+  // ① 内容確認（送信前）＋説明文：枠（q）として作る
+  const headerBox = makeInputBox("内容確認（送信前）", false, "");
+
   const lead = document.createElement("div");
   lead.className = "h";
   lead.style.marginTop = "6px";
-  lead.textContent = "ご予約フォームのご入力ありがとうございます。下記がご入力内容ですので、ご確認ください。確認後、改めて公式LINEよりご連絡いたします。";
-  box.appendChild(lead);
+  lead.innerHTML = `
+    ご予約フォームのご入力ありがとうございます。<br>
+    下記がご入力内容ですので、ご確認ください。<br>
+    確認後、改めて公式LINEよりご連絡いたします。
+  `;
+  headerBox.appendChild(lead);
+
+  // ② 回答内容一覧：別枠（q）として作る
+  const answerBox = document.createElement("div");
+  answerBox.className = "q confirmAnswerBox";
 
   const rv = document.createElement("div");
   rv.className = "review";
-  rv.innerHTML = buildReviewHTML(); // ★HTML版
-  box.appendChild(rv);
+  rv.innerHTML = buildReviewHTML(); // ★回答一覧HTML
+  answerBox.appendChild(rv);
 
-  pageRoot.appendChild(box);
+  // ③ 写真館名：枠の外（ただし同じページ内）
+  const brand = document.createElement("div");
+  brand.className = "confirmBrand";
+  brand.textContent = "写真館toiro";
+
+  // 追加順（ここが図の通り）
+  pageRoot.appendChild(headerBox);
+  pageRoot.appendChild(answerBox);
+  pageRoot.appendChild(brand);
 }
 }
 
@@ -1217,6 +1234,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
