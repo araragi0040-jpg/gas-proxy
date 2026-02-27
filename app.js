@@ -97,14 +97,31 @@ const PLAN_OUTCALL = [
 // ====== 初期化 ======
 (async function init(){
   try {
-    const res = await fetch(`${API_BASE}?action=config`, { method:"GET" });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.message || "config取得に失敗");
-    state.server = json.data;
+    // ✅ 1) まずは仮の設定で即描画（ここがポイント）
+    state.server = { termsVersion:"", minSubmitSeconds:3 };
     state.isReview = false;
     render();
+
+    // ✅ 2) 裏でconfig取得（遅くてもUIはもう出てる）
+    const res = await fetch(`${API_BASE}?action=config`, { method:"GET" });
+    const text = await res.text();
+
+    // GASがHTML(エラー)を返すケース対策
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      throw new Error(`configがJSONではありません。\n先頭: ${text.slice(0, 80)}`);
+    }
+
+    if (!json.ok) throw new Error(json.message || "config取得に失敗");
+
+    // ✅ 3) 取得できたら反映して再描画（表示が変わるのは最小限）
+    state.server = json.data || state.server;
+    render();
+
   } catch (e) {
-    showError(`初期化に失敗しました。\n${e && e.message ? e.message : e}`);
+    showError(`初期化に失敗しました。\n${e?.message || e}`);
   }
 })();
 
@@ -1237,6 +1254,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
