@@ -434,18 +434,20 @@ details > summary{
   }
 
   /* 進捗状況を中央寄せ */
-  .topbar{
-    justify-content: center;
-  }
+.topbar{
+  display: flex;
+  justify-content: center;
+}
 
-  .progress{
-    width: 100%;
-    justify-content: center;
-    gap: 8px;
-    font-size: 12px;
-    flex-wrap: nowrap;
-    text-align: center;
-  }
+.progress{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto;   /* ←中央固定 */
+  width: fit-content; /* ←中身サイズにする */
+  font-size: 12px;
+}
 
   .progress > div:first-child,
   #stepText{
@@ -457,3 +459,4 @@ details > summary{
     min-width: 100px;
   }
 }
+
