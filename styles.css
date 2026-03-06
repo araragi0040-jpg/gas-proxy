@@ -419,26 +419,6 @@ details > summary{
     line-height: 1.7;
   }
 
-  /* 文章がはみ出さないようにする */
-  .hero > div:last-child{
-    flex: 1;
-    min-width: 0; /* ← これが重要 */
-  }
-
-  .hero h1{
-    font-size: 18px;
-    line-height: 1.4;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-  }
-
-  .hero p{
-    font-size: 13px;
-    line-height: 1.75;
-    word-break: keep-all;       /* 日本語をなるべく自然に */
-    overflow-wrap: anywhere;    /* 長い並びも枠内で折る */
-  }
-
   /* 進捗状況を中央寄せ */
 .topbar{
   display: flex;
@@ -465,5 +445,6 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
