@@ -387,5 +387,61 @@ details > summary{
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
 
 
+@media (max-width: 480px){
+  .hero{
+    padding: 18px 16px;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .logo{
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .logo span{
+    font-size: 22px;
+  }
+
+  .hero h1{
+    font-size: 18px;
+    line-height: 1.4;
+  }
+
+  .hero p{
+    font-size: 13px;
+    line-height: 1.8;
+    word-break: keep-all;      /* 日本語をなるべく自然に */
+    overflow-wrap: break-word; /* 長い英数字だけ安全に折る */
+  }
+}
+
+.progress{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--muted);
+  font-size:12.5px;
+  flex-wrap: nowrap;
+}
+
+.progress > div:first-child,
+#stepText{
+  white-space: nowrap;
+}
+
+@media (max-width: 480px){
+  .progress{
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .bar{
+    flex: 1;
+    width: auto;
+    min-width: 120px;
+  }
+}
 
 
