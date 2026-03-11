@@ -446,5 +446,59 @@ details > summary{
   }
 }
 
+/* =========================
+  内容確認（review）スマホ修正
+========================= */
+
+.reviewList{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  width:100%;
+}
+
+/* 1行 */
+.rv{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.6;
+  width:100%;
+}
+
+/* ■ ┗ ・ の列 */
+.rv-mark{
+  width:16px;
+  flex:0 0 16px;
+}
+
+/* 本文 */
+.rv-body{
+  flex:1;
+  min-width:0;
+  display:block;                 /* ← flexをやめる */
+}
+
+/* ラベル */
+.rv-label{
+  font-weight:700;
+}
+
+/* 値 */
+.rv-value{
+  word-break:break-word;
+  overflow-wrap:anywhere;        /* ←長い文字列も折る */
+}
+
+/* 階層インデント（スマホ用） */
+.rv-l2{
+  padding-left:18px;
+}
+
+.rv-l3{
+  padding-left:32px;
+}
+
+
 
 
