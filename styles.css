@@ -380,6 +380,22 @@ details > summary{
     line-height: 1.7;
   }
 
+    /* ┗ の列を広げる */
+  .rv-mark{
+    width:22px;
+    flex:0 0 22px;
+  }
+
+  /* 子 */
+  .rv-l2{
+    padding-left:26px;
+  }
+
+  /* 孫 */
+  .rv-l3{
+    padding-left:44px;
+  }
+
   /* 進捗状況を中央寄せ */
 .topbar{
   display: flex;
@@ -547,6 +563,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
