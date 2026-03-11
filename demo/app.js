@@ -1045,7 +1045,7 @@ function rowL1(label, value){
       <div class="rv-mark">■</div>
       <div class="rv-body">
         <div class="rv-label">${esc(label)}：</div>
-        <div class="rv-value">${esc(value)}</div>
+        ${value ? `<div class="rv-value rv-value-l1">${esc(value)}</div>` : ""}
       </div>
     </div>
   `;
