@@ -305,61 +305,6 @@ details > summary{
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-   Review 完全左づめ
-========================= */
-
-.reviewList{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-
-/* 1行 */
-.rv{
-  display:flex;
-  align-items:flex-start;
-  gap:4px;              /* ←最小限の間隔 */
-}
-
-/* 記号 */
-.rv-mark{
-  width:auto !important;
-  flex:0 0 auto !important;
-}
-
-/* 本文 */
-.rv-body{
-  display:flex;
-  flex-wrap:wrap;
-  gap:4px;              /* ←間隔縮小 */
-}
-
-/* ラベル（←ここが原因） */
-.rv-label{
-  width:auto !important;      /* 固定幅を完全解除 */
-  flex:0 0 auto !important;   /* 幅固定解除 */
-  margin:0 !important;
-  padding:0 !important;
-  font-weight:700;
-  white-space:nowrap;
-}
-
-/* 値 */
-.rv-value{
-  flex:0 0 auto !important;   /* 余計な伸縮を止める */
-  min-width:0;
-}
-
-/* 親は左のまま固定 */
-.rv-l1{
-  padding-left:0 !important;
-}
-
-/* デフォルト（グループ未指定の子孫） */
-.rv-l2{ padding-left: 28px; }
-.rv-l3{ padding-left: 44px; }
-
-/* =========================
    子・孫だけ右にずらす
 ========================= */
 :root{
@@ -391,7 +336,23 @@ details > summary{
   スマホ表示調整
 ========================= */
 @media (max-width: 480px){
+  :root{
+    --indent-kimono-l2: 18px;
+    --indent-plan-l2: 18px;
+    --indent-panel-l2: 10px;
 
+    --indent-kimono-l3: 32px;
+    --indent-plan-l3: 32px;
+    --indent-panel-l3: 10px;
+  }
+
+  .confirmInnerBox{
+    padding: 12px;
+  }
+
+  .review{
+    font-size: 13px;
+  }
   .hero{
     display: grid;
     grid-template-columns: auto 1fr;
@@ -499,6 +460,93 @@ details > summary{
   padding-left:32px;
 }
 
+/* =========================
+  内容確認（review）
+========================= */
+
+.review{
+  width: 100%;
+  overflow: hidden;
+}
+
+.reviewList{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.rv{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+}
+
+.rv-mark{
+  width: 16px;
+  flex: 0 0 16px;
+}
+
+.rv-body{
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+.rv-label{
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  white-space: normal;
+}
+
+.rv-value{
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* 階層 */
+.rv-l1{
+  padding-left: 0;
+}
+
+.rv-l2{
+  padding-left: 28px;
+}
+
+.rv-l3{
+  padding-left: 44px;
+}
+
+/* グループ別 */
+:root{
+  --indent-kimono-l2: 119px;
+  --indent-plan-l2: 75px;
+  --indent-panel-l2: 15px;
+
+  --indent-kimono-l3: 120px;
+  --indent-plan-l3: 98px;
+  --indent-panel-l3: 15px;
+}
+
+.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
+.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
+
+.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2); }
+.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3); }
+
+.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
+.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
+/* ┗なし行 */
+.rv-l2-nomark .rv-mark{
+  display: none;
+}
 
 
 
