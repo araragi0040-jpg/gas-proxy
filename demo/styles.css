@@ -513,6 +513,7 @@ details > summary{
 }
 
 .rv-label{
+  display: block;
   font-weight: 700;
   margin: 0;
   padding: 0;
@@ -520,10 +521,16 @@ details > summary{
 }
 
 .rv-value{
+  display: block;
   min-width: 0;
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: normal;
+}
+
+/* 親行の値はラベルの下に出す */
+.rv-value-l1{
+  margin-top: 2px;
 }
 
 /* 階層 */
