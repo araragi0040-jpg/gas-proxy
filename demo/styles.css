@@ -548,13 +548,13 @@ details > summary{
 
 /* グループ別 */
 :root{
-  --indent-kimono-l2: 119px;
-  --indent-plan-l2: 75px;
-  --indent-panel-l2: 15px;
+  --indent-kimono-l2: 16px;
+  --indent-plan-l2: 16px;
+  --indent-panel-l2: 8px;
 
-  --indent-kimono-l3: 120px;
-  --indent-plan-l3: 98px;
-  --indent-panel-l3: 15px;
+  --indent-kimono-l3: 28px;
+  --indent-plan-l3: 28px;
+  --indent-panel-l3: 8px;
 }
 
 .rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
