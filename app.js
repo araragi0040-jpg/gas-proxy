@@ -2,8 +2,8 @@
 // --------------------
 const openedAtMs = Date.now();
 
-// ★Vercel経由で叩く（同一オリジンなのでCORSにならない）
-const API_BASE = "/api/forms";
+// ★Vercel経由で叩く
+const API_BASE = `${window.location.origin}/api/forms`;
 
 window.addEventListener("error", (e) => {
   const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
@@ -1254,6 +1254,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
