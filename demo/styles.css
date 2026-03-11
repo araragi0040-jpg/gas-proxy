@@ -548,9 +548,9 @@ details > summary{
 
 /* グループ別 */
 :root{
-  --indent-kimono-l2: 29px;
-  --indent-plan-l2: 29px;
-  --indent-panel-l2: 29px;
+  --indent-kimono-l2: 26px;
+  --indent-plan-l2: 26px;
+  --indent-panel-l2: 26px;
 
   --indent-kimono-l3: 68px;
   --indent-plan-l3: 68px;
