@@ -501,12 +501,12 @@ details > summary{
 
 /* スマホ時の ┗ と ・ の位置 */
 :root{
-  --indent-kimono-l2: 0px;
-  --indent-plan-l2: 0px;
-  --indent-panel-l2: 14px;
+  --indent-kimono-l2: 22px;
+  --indent-plan-l2: 22px;
+  --indent-panel-l2: 22px;
 
   --indent-kimono-l3: 0px;
-  --indent-plan-l3: 5px;
+  --indent-plan-l3: 32px;
   --indent-panel-l3: 18px;
 }
  
@@ -550,16 +550,6 @@ details > summary{
     flex:0 0 22px;
   }
 
-  /* 子 */
-  .rv-l2{
-    padding-left:86px; 
-  }
-
-  /* 孫 */
-  .rv-l3{
-    padding-left:90px;  
-  }
-
   /* 進捗状況を中央寄せ */
 .topbar{
   display: flex;
@@ -586,4 +576,5 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
