@@ -1,4 +1,25 @@
 export default async function handler(req, res) {
+  const origin = req.headers.origin || "";
+
+  // 許可するオリジン
+  const allowedOrigins = [
+    "https://araragi0040-jpg.github.io",
+    "https://gas-proxy-kappa.vercel.app",
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+
+  res.setHeader("Vary", "Origin");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // preflight対応
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   const gasUrl = process.env.GAS_URL; // 例: https://script.google.com/macros/s/.../exec
   if (!gasUrl) return res.status(500).json({ ok: false, message: "GAS_URL is not set" });
 
@@ -24,7 +45,7 @@ export default async function handler(req, res) {
       // GASへPOST（JSON文字列をそのまま投げる）
       const r = await fetch(gasUrl, {
         method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // preflight回避寄り
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: typeof req.body === "string" ? req.body : JSON.stringify(req.body),
       });
 
@@ -37,7 +58,7 @@ export default async function handler(req, res) {
       }
     }
 
-    res.setHeader("Allow", ["GET", "POST"]);
+    res.setHeader("Allow", ["GET", "POST", "OPTIONS"]);
     return res.status(405).json({ ok: false, message: "Method not allowed" });
 
   } catch (e) {
