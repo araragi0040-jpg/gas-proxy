@@ -546,8 +546,8 @@ details > summary{
 
     /* ┗ の列を広げる */
   .rv-mark{
-    width:14px;
-    flex:0 0 14px;
+    width:12px;
+    flex:0 0 12px;
   }
 
   :root{
@@ -556,7 +556,7 @@ details > summary{
   --indent-panel-l2: 21px;
 
   --indent-kimono-l3: 10px;
-  --indent-plan-l3: 34px;
+  --indent-plan-l3: 40px;
   --indent-panel-l3: 14px;
 }
 
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
