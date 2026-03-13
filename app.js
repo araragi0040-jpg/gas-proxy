@@ -1045,9 +1045,9 @@ if (Array.isArray(a.options) && a.options.length){
 }
 
 // レベル別行
-function rowL1(label, value){
+function rowL1(label, value, extraClass = ""){
   return `
-    <div class="rv rv-l1">
+    <div class="rv rv-l1 ${extraClass}">
       <div class="rv-mark">■</div>
       <div class="rv-body rv-body-l1">
         <div class="rv-label">${esc(label)}：</div>
@@ -1266,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
