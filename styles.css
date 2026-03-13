@@ -331,6 +331,159 @@ details > summary{
 .rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
 .rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
 
+/* =========================
+  内容確認（review）スマホ修正
+========================= */
+
+.reviewList{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  width:100%;
+}
+
+/* 1行 */
+.rv{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  line-height:1.6;
+  width:100%;
+}
+
+/* ■ ┗ ・ の列 */
+.rv-mark{
+  width:16px;
+  flex:0 0 16px;
+}
+
+/* 本文 */
+.rv-body{
+  flex:1;
+  min-width:0;
+  display:block;                 /* ← flexをやめる */
+}
+
+/* ラベル */
+.rv-label{
+  font-weight:700;
+}
+
+/* 値 */
+.rv-value{
+  word-break:break-word;
+  overflow-wrap:anywhere;        /* ←長い文字列も折る */
+}
+
+/* 階層インデント（スマホ用） */
+.rv-l2{
+  padding-left:18px;
+}
+
+.rv-l3{
+  padding-left:32px;
+}
+
+/* =========================
+  内容確認（review）
+========================= */
+
+.review{
+  width: 100%;
+  overflow: hidden;
+}
+
+.reviewList{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.rv{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.6;
+  width: 100%;
+  max-width: 100%;
+}
+
+.rv-mark{
+  width: 16px;
+  flex: 0 0 16px;
+}
+
+.rv-body{
+  flex: 1;
+  min-width: 0;
+}
+
+  /* 親行だけ「基本横並び」 */
+.rv-body-l1{
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;   /* ←幅が足りない時だけ折り返す */
+  gap: 4px;
+}
+
+.rv-label{
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  /*white-space: normal;*/
+  white-space: nowrap;
+}
+
+.rv-value{
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.rv-value-l1{
+  flex: 1;
+  min-width: 0;
+}
+
+/* 階層 */
+.rv-l1{
+  padding-left: 0;
+}
+
+.rv-l2{
+  padding-left: 16px;
+}
+
+.rv-l3{
+  padding-left: 28px;
+}
+
+/* グループ別 */
+:root{
+  --indent-kimono-l2: 124px;
+  --indent-plan-l2: 78px;
+  --indent-panel-l2: 22px;
+
+  --indent-kimono-l3: 64px;
+  --indent-plan-l3: 106px;
+  --indent-panel-l3: 8px;
+}
+
+.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
+.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
+
+.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2); }
+.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3); }
+
+.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
+.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
+
+/* ┗なし行 */
+.rv-l2-nomark .rv-mark{
+  display: none;
+}
 
 /* =========================
   スマホ表示調整
@@ -433,174 +586,4 @@ details > summary{
     min-width: 100px;
   }
 }
-
-/* =========================
-  内容確認（review）スマホ修正
-========================= */
-
-.reviewList{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  width:100%;
-}
-
-/* 1行 */
-.rv{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  line-height:1.6;
-  width:100%;
-}
-
-/* ■ ┗ ・ の列 */
-.rv-mark{
-  width:16px;
-  flex:0 0 16px;
-}
-
-/* 本文 */
-.rv-body{
-  flex:1;
-  min-width:0;
-  display:block;                 /* ← flexをやめる */
-}
-
-/* ラベル */
-.rv-label{
-  font-weight:700;
-}
-
-/* 値 */
-.rv-value{
-  word-break:break-word;
-  overflow-wrap:anywhere;        /* ←長い文字列も折る */
-}
-
-/* 階層インデント（スマホ用） */
-.rv-l2{
-  padding-left:18px;
-}
-
-.rv-l3{
-  padding-left:32px;
-}
-
-/* =========================
-  内容確認（review）
-========================= */
-
-.review{
-  width: 100%;
-  overflow: hidden;
-}
-
-.reviewList{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-}
-
-.rv{
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  line-height: 1.6;
-  width: 100%;
-  max-width: 100%;
-}
-
-.rv-mark{
-  width: 16px;
-  flex: 0 0 16px;
-}
-
-.rv-body{
-  flex: 1;
-  min-width: 0;
-  /*display: block;*/
-}
-
-  /* 親行だけ「基本横並び」 */
-.rv-body-l1{
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;   /* ←幅が足りない時だけ折り返す */
-  gap: 4px;
-}
-
-.rv-label{
-  font-weight: 700;
-  margin: 0;
-  padding: 0;
-  /*white-space: normal;*/
-  white-space: nowrap;
-}
-
-.rv-value{
-  min-width: 0;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
-.rv-value-l1{
-  flex: 1;
-  min-width: 0;
-}
-
-/* 階層 */
-.rv-l1{
-  padding-left: 0;
-}
-
-.rv-l2{
-  padding-left: 16px;
-}
-
-.rv-l3{
-  padding-left: 28px;
-}
-
-/* グループ別 */
-:root{
-  --indent-kimono-l2: 124px;
-  --indent-plan-l2: 78px;
-  --indent-panel-l2: 22px;
-
-  --indent-kimono-l3: 64px;
-  --indent-plan-l3: 106px;
-  --indent-panel-l3: 8px;
-}
-
-.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
-.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
-
-.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2); }
-.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3); }
-
-.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
-.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
-
-/* ┗なし行 */
-.rv-l2-nomark .rv-mark{
-  display: none;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
