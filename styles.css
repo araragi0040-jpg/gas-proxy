@@ -336,16 +336,27 @@ details > summary{
   スマホ表示調整
 ========================= */
 @media (max-width: 480px){
-  :root{
-    --indent-kimono-l2: 60px;
-    --indent-plan-l2: 60px;
-    --indent-panel-l2: 20px;
+/* スマホ時だけ、特定の親行は縦並びにする */
+.rv.mobile-break .rv-body-l1{
+  display: block;
+}
 
-    --indent-kimono-l3: 32px;
-    --indent-plan-l3: 64px;
-    --indent-panel-l3: 10px;
-  }
+.rv.mobile-break .rv-value-l1{
+  display: block;
+  margin-top: 2px;
+}
 
+/* スマホ時の ┗ と ・ の位置 */
+:root{
+  --indent-kimono-l2: 18px;
+  --indent-plan-l2: 18px;
+  --indent-panel-l2: 12px;
+
+  --indent-kimono-l3: 34px;
+  --indent-plan-l3: 34px;
+  --indent-panel-l3: 18px;
+}
+ 
   .confirmInnerBox{
     padding: 12px;
   }
@@ -577,6 +588,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
