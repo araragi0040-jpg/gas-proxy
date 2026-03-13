@@ -388,7 +388,7 @@ details > summary{
 
   /* 子 */
   .rv-l2{
-    padding-left:12px;
+    padding-left:60px;
   }
 
   /* 孫 */
@@ -577,6 +577,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
