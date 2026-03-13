@@ -388,12 +388,12 @@ details > summary{
 
   /* 子 */
   .rv-l2{
-    padding-left:60px;
+    padding-left:86px;  /* ←┗の左空間幅の指定 */
   }
 
   /* 孫 */
   .rv-l3{
-    padding-left:14px;
+    padding-left:90px;  /* ←┗の下・の左空間幅指定 */
   }
 
   /* 進捗状況を中央寄せ */
@@ -577,6 +577,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
