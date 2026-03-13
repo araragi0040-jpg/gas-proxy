@@ -348,12 +348,12 @@ details > summary{
 
 /* スマホ時の ┗ と ・ の位置 */
 :root{
-  --indent-kimono-l2: 18px;
-  --indent-plan-l2: 18px;
-  --indent-panel-l2: 12px;
+  --indent-kimono-l2: 0px;
+  --indent-plan-l2: 0px;
+  --indent-panel-l2: 14px;
 
-  --indent-kimono-l3: 34px;
-  --indent-plan-l3: 34px;
+  --indent-kimono-l3: 0px;
+  --indent-plan-l3: 5px;
   --indent-panel-l3: 18px;
 }
  
@@ -588,6 +588,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
