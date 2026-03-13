@@ -463,11 +463,11 @@ details > summary{
 /* グループ別 */
 :root{
   --indent-kimono-l2: 125px;
-  --indent-plan-l2: 79px;
-  --indent-panel-l2: 22px;
+  --indent-plan-l2: 78px;
+  --indent-panel-l2: 21px;
 
   --indent-kimono-l3: 64px;
-  --indent-plan-l3: 107px;
+  --indent-plan-l3: 105px;
   --indent-panel-l3: 8px;
 }
 
@@ -551,12 +551,12 @@ details > summary{
   }
 
   :root{
-  --indent-kimono-l2: 60px;
-  --indent-plan-l2: 60px;
-  --indent-panel-l2: 60px;
+  --indent-kimono-l2: 21px;
+  --indent-plan-l2: 21px;
+  --indent-panel-l2: 21px;
 
   --indent-kimono-l3: 10px;
-  --indent-plan-l3: 70px;
+  --indent-plan-l3: 31px;
   --indent-panel-l3: 14px;
 }
 
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
