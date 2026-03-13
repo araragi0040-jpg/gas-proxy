@@ -309,13 +309,13 @@ details > summary{
 ========================= */
 :root{
   /* グループ別：子(┗) */
-  --indent-kimono-l2: 119px;
-  --indent-plan-l2:   75px;
+  --indent-kimono-l2: 120px;
+  --indent-plan-l2:   76px;
   --indent-panel-l2:  15px; /* ┗なしでも本文の左位置調整に使える */
 
   /* グループ別：孫(・) */
   --indent-kimono-l3: 120px;
-  --indent-plan-l3:   98px;
+  --indent-plan-l3:   99px;
   --indent-panel-l3:  15px;
 }
 
@@ -462,12 +462,12 @@ details > summary{
 
 /* グループ別 */
 :root{
-  --indent-kimono-l2: 124px;
-  --indent-plan-l2: 78px;
+  --indent-kimono-l2: 125px;
+  --indent-plan-l2: 79px;
   --indent-panel-l2: 22px;
 
   --indent-kimono-l3: 64px;
-  --indent-plan-l3: 106px;
+  --indent-plan-l3: 107px;
   --indent-panel-l3: 8px;
 }
 
@@ -551,12 +551,12 @@ details > summary{
   }
 
   :root{
-  --indent-kimono-l2: 0px;
-  --indent-plan-l2: 0px;
-  --indent-panel-l2: 10px;
+  --indent-kimono-l2: 60px;
+  --indent-plan-l2: 60px;
+  --indent-panel-l2: 60px;
 
   --indent-kimono-l3: 10px;
-  --indent-plan-l3: 10px;
+  --indent-plan-l3: 70px;
   --indent-panel-l3: 14px;
 }
 
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
