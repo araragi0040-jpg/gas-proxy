@@ -551,12 +551,12 @@ details > summary{
   }
 
   :root{
-  --indent-kimono-l2: 22px;
-  --indent-plan-l2: 22px;
-  --indent-panel-l2: 21px;
+  --indent-kimono-l2: 20px;
+  --indent-plan-l2: 20px;
+  --indent-panel-l2: 20px;
 
   --indent-kimono-l3: 10px;
-  --indent-plan-l3: 40px;
+  --indent-plan-l3: 45px;
   --indent-panel-l3: 14px;
 }
 
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
