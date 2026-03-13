@@ -1049,9 +1049,9 @@ function rowL1(label, value){
   return `
     <div class="rv rv-l1">
       <div class="rv-mark">■</div>
-      <div class="rv-body">
+      <div class="rv-body rv-body-l1">
         <div class="rv-label">${esc(label)}：</div>
-        <div class="rv-value">${esc(value)}</div>
+        ${value ? `<div class="rv-value rv-value-l1">${esc(value)}</div>` : ""}
       </div>
     </div>
   `;
@@ -1266,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
