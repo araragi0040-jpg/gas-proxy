@@ -501,12 +501,12 @@ details > summary{
 
 /* スマホ時の ┗ と ・ の位置 */
 :root{
-  --indent-kimono-l2: 32px;
-  --indent-plan-l2: 32px;
-  --indent-panel-l2: 32px;
+  --indent-kimono-l2: 30px;
+  --indent-plan-l2: 30px;
+  --indent-panel-l2: 30px;
 
   --indent-kimono-l3: 0px;
-  --indent-plan-l3: 42x;
+  --indent-plan-l3: 45x;
   --indent-panel-l3: 18px;
 }
  
@@ -546,8 +546,8 @@ details > summary{
 
     /* ┗ の列を広げる */
   .rv-mark{
-    width:22px;
-    flex:0 0 22px;
+    width:16px;
+    flex:0 0 16px;
   }
 
   /* 進捗状況を中央寄せ */
@@ -576,6 +576,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
