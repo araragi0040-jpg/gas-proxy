@@ -501,12 +501,12 @@ details > summary{
 
 /* スマホ時の ┗ と ・ の位置 */
 :root{
-  --indent-kimono-l2: 40px;
-  --indent-plan-l2: 40px;
-  --indent-panel-l2: 40px;
+  --indent-kimono-l2: 32px;
+  --indent-plan-l2: 32px;
+  --indent-panel-l2: 32px;
 
   --indent-kimono-l3: 0px;
-  --indent-plan-l3: 50x;
+  --indent-plan-l3: 42x;
   --indent-panel-l3: 18px;
 }
  
@@ -576,6 +576,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
