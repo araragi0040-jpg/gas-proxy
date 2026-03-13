@@ -555,12 +555,12 @@ details > summary{
 
 /* グループ別 */
 :root{
-  --indent-kimono-l2: 16px;
-  --indent-plan-l2: 16px;
-  --indent-panel-l2: 8px;
+  --indent-kimono-l2: 60px;
+  --indent-plan-l2: 60px;
+  --indent-panel-l2: 20px;
 
-  --indent-kimono-l3: 28px;
-  --indent-plan-l3: 28px;
+  --indent-kimono-l3: 64px;
+  --indent-plan-l3: 20px;
   --indent-panel-l3: 8px;
 }
 
@@ -577,6 +577,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
