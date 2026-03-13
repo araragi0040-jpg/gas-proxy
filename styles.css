@@ -556,7 +556,7 @@ details > summary{
   --indent-panel-l2: 20px;
 
   --indent-kimono-l3: 10px;
-  --indent-plan-l3: 42px;
+  --indent-plan-l3: 40px;
   --indent-panel-l3: 14px;
 }
 
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
