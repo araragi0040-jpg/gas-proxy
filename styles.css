@@ -388,12 +388,12 @@ details > summary{
 
   /* 子 */
   .rv-l2{
-    padding-left:86px;  /* ←┗の左空間幅の指定 */
+    padding-left:86px; 
   }
 
   /* 孫 */
   .rv-l3{
-    padding-left:90px;  /* ←┗の下・の左空間幅指定 */
+    padding-left:90px;  
   }
 
   /* 進捗状況を中央寄せ */
@@ -555,12 +555,12 @@ details > summary{
 
 /* グループ別 */
 :root{
-  --indent-kimono-l2: 118px;
+  --indent-kimono-l2: 122px;
   --indent-plan-l2: 78px;
   --indent-panel-l2: 22px;
 
   --indent-kimono-l3: 64px;
-  --indent-plan-l3: 88px;
+  --indent-plan-l3: 108px;
   --indent-panel-l3: 8px;
 }
 
@@ -577,6 +577,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
