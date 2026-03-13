@@ -3,7 +3,7 @@
 const openedAtMs = Date.now();
 
 // ★Vercel経由で叩く
-const API_BASE = `${window.location.origin}/api/forms`;
+const API_BASE = "https://gas-proxy-kappa.vercel.app/api/forms";
 
 window.addEventListener("error", (e) => {
   const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
@@ -1266,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
