@@ -376,13 +376,13 @@ details > summary{
 }
 
 /* 階層インデント（スマホ用） */
-.rv-l2{
+/*.rv-l2{
   padding-left:18px;
 }
 
 .rv-l3{
   padding-left:32px;
-}
+}*/
 
 /* =========================
   内容確認（review）
@@ -595,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
