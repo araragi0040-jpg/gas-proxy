@@ -985,7 +985,7 @@ function buildReviewHTML(){
   items.push(
     rowL1(
       "着付けされる希望者の詳細",
-      detailText || "無し"
+      detailText || "無し","mobile-break"
     )
   );
 }
@@ -997,7 +997,7 @@ function buildReviewHTML(){
       if (r.includes("無し")){
         items.push(rowL1("着物レンタル", "無し"));
       } else {
-        items.push(rowL1("着物レンタル", "有り"));
+        items.push(rowL1("着物レンタル", "有り","mobile-break"));
         const detail = r.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
         items.push(rowL2(detail.join("、"), "kimono")); // ← 子を L2 で固定インデント
       }
@@ -1008,16 +1008,16 @@ function buildReviewHTML(){
   const isSet = String(a.planType || "").startsWith("セットプラン");
   if (!isSet){
     if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio){
-      items.push(rowL1("プラン", "写真館撮影"));
+      items.push(rowL1("プラン", "写真館撮影","mobile-break"));
       items.push(rowL2(a.planStudio, "plan"));
     } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall){
-      items.push(rowL1("プラン", "出張撮影"));
+      items.push(rowL1("プラン", "出張撮影","mobile-break"));
       items.push(rowL2(a.planOutcall, "plan"));
     } else {
-      items.push(rowL1("プラン", a.planType || ""));
+      items.push(rowL1("プラン", a.planType || "","mobile-break"));
     }
   } else {
-    items.push(rowL1("プラン", a.planType || ""));
+    items.push(rowL1("プラン", a.planType || "","mobile-break"));
 
     const cleaned = (Array.isArray(a.planSet) ? a.planSet : [])
       .filter(x => x && !String(x).startsWith("▼"));
@@ -1037,7 +1037,7 @@ outcallItems.forEach(x => items.push(rowL3(x, "plan")));
 
 // パネル/アルバム（┗を一切出さない）
 if (Array.isArray(a.options) && a.options.length){
-  items.push(rowL1("パネル/アルバム", ""));
+  items.push(rowL1("パネル/アルバム", "","mobile-break"));
   a.options.forEach(x => items.push(rowL2NoMark(x, "panel"))); // ★全部┗なし
 }
 
@@ -1266,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
