@@ -337,12 +337,12 @@ details > summary{
 ========================= */
 @media (max-width: 480px){
   :root{
-    --indent-kimono-l2: 18px;
-    --indent-plan-l2: 18px;
-    --indent-panel-l2: 10px;
+    --indent-kimono-l2: 60px;
+    --indent-plan-l2: 60px;
+    --indent-panel-l2: 20px;
 
     --indent-kimono-l3: 32px;
-    --indent-plan-l3: 32px;
+    --indent-plan-l3: 64px;
     --indent-panel-l3: 10px;
   }
 
@@ -577,6 +577,7 @@ details > summary{
 .rv-l2-nomark .rv-mark{
   display: none;
 }
+
 
 
 
