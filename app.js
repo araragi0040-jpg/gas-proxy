@@ -979,10 +979,16 @@ function buildReviewHTML(){
     items.push(rowL1("撮影内容", display.join("、")));
   }
 
-  // 着付け
-  if (a.dressingNeed && a.dressingNeed !== "無し"){
-    items.push(rowL1("着付けヘアセットご希望", a.dressingNeed));
-  }
+// 着付け
+{
+  const detailText = String(a.dressingDetail || "").trim();
+  items.push(
+    rowL1(
+      "着付けされる希望者の詳細",
+      detailText || "無し"
+    )
+  );
+}
 
   // 着物レンタル（★このブロックが画像の1つ目の対象）
   {
@@ -1260,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
