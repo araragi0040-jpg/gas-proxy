@@ -976,7 +976,7 @@ function buildReviewHTML(){
   {
     const contents = Array.isArray(a.shootingContents) ? a.shootingContents : [];
     const display = contents.map(x => x === "その他" ? `その他（${a.shootingContentsOther || ""}）` : x);
-    items.push(rowL1("撮影内容", display.join("、")));
+    items.push(rowL1("撮影内容", display.join("、"),"mobile-break"));
   }
 
 // 着付け
@@ -1266,6 +1266,7 @@ async function submitAll(){
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
   }
 }
+
 
 
 
