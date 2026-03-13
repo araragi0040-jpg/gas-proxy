@@ -353,8 +353,8 @@ details > summary{
 
 /* ■ ┗ ・ の列 */
 .rv-mark{
-  width:16px;
-  flex:0 0 16px;
+  width:14px;
+  flex:0 0 14px;
 }
 
 /* 本文 */
@@ -410,8 +410,8 @@ details > summary{
 }
 
 .rv-mark{
-  width: 16px;
-  flex: 0 0 16px;
+  width: 14px;
+  flex: 0 0 14px;
 }
 
 .rv-body{
@@ -546,9 +546,28 @@ details > summary{
 
     /* ┗ の列を広げる */
   .rv-mark{
-    width:16px;
-    flex:0 0 16px;
+    width:14px;
+    flex:0 0 14px;
   }
+
+  :root{
+  --indent-kimono-l2: 0px;
+  --indent-plan-l2: 0px;
+  --indent-panel-l2: 10px;
+
+  --indent-kimono-l3: 10px;
+  --indent-plan-l3: 10px;
+  --indent-panel-l3: 14px;
+}
+
+.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2) !important; }
+.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3) !important; }
+
+.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2) !important; }
+.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3) !important; }
+
+.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2) !important; }
+.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3) !important; }
 
   /* 進捗状況を中央寄せ */
 .topbar{
@@ -576,6 +595,7 @@ details > summary{
     min-width: 100px;
   }
 }
+
 
 
 
