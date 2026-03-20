@@ -50,12 +50,12 @@ body{
 .logo{
   width:68px; height:68px;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--accent2), #fff);
+  background:#fff; 
   display:flex;
   align-items:center;
   justify-content:center;
-  border:1px solid var(--line);
-  box-shadow: 0 8px 20px rgba(215,122,97,.18);
+  border: 1px solid #eee; 
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
   flex:0 0 auto;
   overflow:hidden;
   padding: 6px;
@@ -64,10 +64,9 @@ body{
 .logo img{
   width:100%;   /* ←サイズ調整 */
   height:100%;
-  object-fit: cover; 
-  border-radius: 14px; 
+  object-fit: contain; 
+  border-radius: 12px; 
   display: block;
-  background: #fff;
 }
 
 .logo span{ font-size:26px; }
