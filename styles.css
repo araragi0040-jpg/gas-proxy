@@ -48,8 +48,8 @@ body{
 }
 
 .logo{
-  width:54px; height:54px;
-  border-radius: 16px;
+  width:68px; height:68px;
+  border-radius: 18px;
   background: linear-gradient(135deg, var(--accent2), #fff);
   display:flex;
   align-items:center;
@@ -58,12 +58,16 @@ body{
   box-shadow: 0 8px 20px rgba(215,122,97,.18);
   flex:0 0 auto;
   overflow:hidden;
+  padding: 6px;
 }
 
 .logo img{
-  width:70%;   /* ←サイズ調整 */
-  height:70%;
-  object-fit:contain;
+  width:100%;   /* ←サイズ調整 */
+  height:100%;
+  object-fit: cover; 
+  border-radius: 14px; 
+  display: block;
+  background: #fff;
 }
 
 .logo span{ font-size:26px; }
