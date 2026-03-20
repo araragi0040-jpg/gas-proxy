@@ -51,8 +51,9 @@ body{
   width:54px; height:54px;
   border-radius: 16px;
   background: linear-gradient(135deg, var(--accent2), #fff);
-  display:grid;
-  place-items:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border:1px solid var(--line);
   box-shadow: 0 8px 20px rgba(215,122,97,.18);
   flex:0 0 auto;
