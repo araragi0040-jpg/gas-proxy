@@ -56,6 +56,13 @@ body{
   border:1px solid var(--line);
   box-shadow: 0 8px 20px rgba(215,122,97,.18);
   flex:0 0 auto;
+  overflow:hidden;
+}
+
+.logo img{
+  width:70%;   /* ←サイズ調整 */
+  height:70%;
+  object-fit:contain;
 }
 
 .logo span{ font-size:26px; }
