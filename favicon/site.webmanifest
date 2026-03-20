@@ -2,7 +2,7 @@
   "name": "ご予約入力フォーム",
   "short_name": "予約フォーム",
   "icons": [
-    { "src": "favicon-32.png", "sizes": "32x32", "type": "image/png" }
+    { "src": "favicon.jpg", "sizes": "32x32", "type": "image/png" }
   ],
   "theme_color": "#fff7f2",
   "background_color": "#fff7f2",
