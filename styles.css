@@ -16,6 +16,15 @@
 
   --shadow: 0 10px 30px rgba(0,0,0,.08);
   --radius: 18px;
+
+  /* review indents (desktop defaults) */
+  --indent-kimono-l2: 124px;
+  --indent-plan-l2: 78px;
+  --indent-panel-l2: 21px;
+
+  --indent-kimono-l3: 64px;
+  --indent-plan-l3: 105px;
+  --indent-panel-l3: 8px;
 }
 
 *{ box-sizing:border-box; }
@@ -316,86 +325,6 @@ details > summary{
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* =========================
-   子・孫だけ右にずらす
-========================= */
-:root{
-  /* グループ別：子(┗) */
-  --indent-kimono-l2: 120px;
-  --indent-plan-l2:   76px;
-  --indent-panel-l2:  15px; /* ┗なしでも本文の左位置調整に使える */
-
-  /* グループ別：孫(・) */
-  --indent-kimono-l3: 120px;
-  --indent-plan-l3:   99px;
-  --indent-panel-l3:  15px;
-}
-
-/* 着物レンタル */
-.rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
-.rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
-
-/* プラン */
-.rv-l2.grp-plan{ padding-left: var(--indent-plan-l2); }
-.rv-l3.grp-plan{ padding-left: var(--indent-plan-l3); }
-
-/* パネル/アルバム（┗なし版もここで調整できる） */
-.rv-l2.grp-panel{ padding-left: var(--indent-panel-l2); }
-.rv-l3.grp-panel{ padding-left: var(--indent-panel-l3); }
-
-/* =========================
-  内容確認（review）スマホ修正
-========================= */
-
-.reviewList{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  width:100%;
-}
-
-/* 1行 */
-.rv{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  line-height:1.6;
-  width:100%;
-}
-
-/* ■ ┗ ・ の列 */
-.rv-mark{
-  width:14px;
-  flex:0 0 14px;
-}
-
-/* 本文 */
-.rv-body{
-  flex:1;
-  min-width:0;
-  display:block;                 /* ← flexをやめる */
-}
-
-/* ラベル */
-.rv-label{
-  font-weight:700;
-}
-
-/* 値 */
-.rv-value{
-  word-break:break-word;
-  overflow-wrap:anywhere;        /* ←長い文字列も折る */
-}
-
-/* 階層インデント（スマホ用） */
-/*.rv-l2{
-  padding-left:18px;
-}
-
-.rv-l3{
-  padding-left:32px;
-}*/
-
-/* =========================
   内容確認（review）
 ========================= */
 
@@ -472,16 +401,6 @@ details > summary{
 }
 
 /* グループ別 */
-:root{
-  --indent-kimono-l2: 124px;
-  --indent-plan-l2: 78px;
-  --indent-panel-l2: 21px;
-
-  --indent-kimono-l3: 64px;
-  --indent-plan-l3: 105px;
-  --indent-panel-l3: 8px;
-}
-
 .rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
 .rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
 
@@ -510,17 +429,6 @@ details > summary{
   margin-top: 2px;
 }
 
-/* スマホ時の ┗ と ・ の位置 */
-:root{
-  --indent-kimono-l2: 30px;
-  --indent-plan-l2: 30px;
-  --indent-panel-l2: 30px;
-
-  --indent-kimono-l3: 0px;
-  --indent-plan-l3: 45x;
-  --indent-panel-l3: 18px;
-}
- 
   .confirmInnerBox{
     padding: 12px;
   }
@@ -606,19 +514,4 @@ details > summary{
     min-width: 100px;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
