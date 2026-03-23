@@ -88,6 +88,10 @@ body{
   font-size: 13.5px;
 }
 
+.hero-line{
+  display:block;
+}
+
 /* =========================
   Panel / Cards / Progress
 ========================= */
@@ -336,7 +340,7 @@ details > summary{
 .reviewList{
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -369,6 +373,7 @@ details > summary{
 
 .rv-label{
   font-weight: 700;
+  font-size: 14px;
   margin: 0;
   padding: 0;
   /*white-space: normal;*/
@@ -380,6 +385,10 @@ details > summary{
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: normal;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 2px 8px;
 }
 
 .rv-value-l1{
@@ -390,6 +399,11 @@ details > summary{
 /* 階層 */
 .rv-l1{
   padding-left: 0;
+}
+
+.rv-l1 + .rv-l1{
+  padding-top: 6px;
+  border-top: 1px solid #eee;
 }
 
 .rv-l2{
@@ -435,6 +449,10 @@ details > summary{
 
   .review{
     font-size: 13px;
+  }
+
+  .rv-value{
+    padding: 3px 7px;
   }
   .hero{
     display: grid;
