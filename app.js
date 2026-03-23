@@ -387,11 +387,13 @@ function render(){
   clearError();
   cleanupByBranch();
 
-  // ページ変化時だけ上へ
-  if (state.lastPageIndex !== state.pageIndex) {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    state.lastPageIndex = state.pageIndex;
-  }
+function scrollToTopAfterRender(){
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+}
 
   const totalPages = pages.length;
   if (state.pageIndex < 0) state.pageIndex = 0;
@@ -1175,11 +1177,13 @@ btnBack.addEventListener("click", ()=>{
   if (state.isReview){
     state.isReview = false;
     render();
+    scrollToTopAfterRender();
     return;
   }
 
   state.pageIndex--;
   render();
+  scrollToTopAfterRender();
 });
 
 btnNext.addEventListener("click", ()=>{
@@ -1200,12 +1204,14 @@ btnNext.addEventListener("click", ()=>{
   if (last){
     state.isReview = true;
     render();
+    scrollToTopAfterRender();
     return;
   }
 
   // 通常は次へ
   state.pageIndex++;
   render();
+  scrollToTopAfterRender();
 });
 
 async function submitAll(){
