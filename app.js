@@ -20,6 +20,7 @@ const state = {
   pageIndex: 0,
   lastPageIndex: 0,
   server: { termsVersion:"", minSubmitSeconds:3 },
+  formToken: "",
   answers: {
     email: "",
     name: "",
@@ -98,8 +99,10 @@ const PLAN_OUTCALL = [
 (async function init(){
   // まずは仮設定で即表示
   state.server = { termsVersion:"", minSubmitSeconds:3 };
+  state.formToken = "";
   state.isReview = false;
   render();
+  ensureHoneypotInput();
 
   try {
     const res = await fetch(`${API_BASE}?action=config`, {
@@ -114,20 +117,25 @@ const PLAN_OUTCALL = [
       json = JSON.parse(text);
     } catch {
       console.warn("configがJSONではありません:", text.slice(0, 120));
-      return; // ← エラー表示せず、そのまま続行
+      showError("初期化に失敗しました。ページを更新してから再度お試しください。");
+      return;
     }
 
     if (!json.ok) {
       console.warn("config取得失敗:", json.message);
-      return; // ← エラー表示せず、そのまま続行
+      showError("初期化に失敗しました。ページを更新してから再度お試しください。");
+      return;
     }
 
-    state.server = { ...state.server, ...(json.data || {}) };
+    const data = json.data || {};
+    const { formToken, ...serverData } = data;
+    state.server = { ...state.server, ...serverData };
+    state.formToken = typeof formToken === "string" ? formToken : "";
     render();
 
   } catch (e) {
     console.warn("config取得エラー:", e?.message || e);
-    // ← showErrorしない
+    showError("初期化に失敗しました。ページを更新してから再度お試しください。");
   }
 })();
 
@@ -135,6 +143,28 @@ const PLAN_OUTCALL = [
 function showError(msg){ errBox.style.display="block"; errBox.textContent=msg; }
 function clearError(){ errBox.style.display="none"; errBox.textContent=""; }
 function toggleLoading(on){ overlay.style.display = on ? "flex" : "none"; }
+
+function ensureHoneypotInput(){
+  if (document.querySelector('input[name="website"][data-honeypot="1"]')) return;
+
+  const hpInput = document.createElement("input");
+  hpInput.type = "text";
+  hpInput.name = "website";
+  hpInput.autocomplete = "off";
+  hpInput.tabIndex = -1;
+  hpInput.setAttribute("aria-hidden", "true");
+  hpInput.setAttribute("data-honeypot", "1");
+  hpInput.style.cssText = "position:absolute;left:-9999px;opacity:0;height:0;width:0;border:0;padding:0;";
+  pageRoot.parentElement.appendChild(hpInput);
+}
+
+function scrollToTopAfterRender(){
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+}
 
 function rerenderAll(){
   cleanupByBranch();
@@ -295,105 +325,10 @@ function renderCheckbox(key, title, required, options, hint, other){
   return box;
 }
 
-function renderReviewScreen(){
-  // ここで「最終送信前の整形（kimonoRental）」と同じ整形を “表示用に” 行う
-  const answers = structuredClone(state.answers);
-
-  // kimonoRental 表示用整形（submitAllと同じ）
-  const items = answers.kimonoRentalItems || [];
-  answers.kimonoRental = items.includes("その他")
-    ? items.map(x => x === "その他" ? `その他（${answers.kimonoRentalOther || ""}）` : x)
-    : items;
-
-  // rows を作る（例：着物レンタル）
-  // ※ここはあなたのフォーム項目に合わせて増やしていける
-  const rows = [];
-
-  // 例：着物レンタル（親）
-  if (answers.kimonoRental && answers.kimonoRental.length){
-    rows.push({ level:1, mark:"■", label:"着物レンタル", value: "有り" });
-
-    // 子：選択肢を列挙（セットプラン等）
-    answers.kimonoRental.forEach(v=>{
-      rows.push({ level:2, mark:"┗", label:"", value: v });
-    });
-  } else if (answers.kimonoRental && typeof answers.kimonoRental === "string"){
-    // 文字列で来る場合もケア
-    rows.push({ level:1, mark:"■", label:"着物レンタル", value: answers.kimonoRental });
-  }
-
-  // 画面描画（pageRoot に差し込む想定）
-  pageRoot.innerHTML = `
-    <h2>内容確認</h2>
-    <p class="desc">送信前に内容をご確認ください。</p>
-
-    <div class="review">
-      <div class="reviewList">
-        ${rows.map(r => `
-          <div class="rv rv-l${r.level}">
-            <div class="rv-mark">${r.mark || ""}</div>
-            <div class="rv-body">
-              <div class="rv-label">${escapeHtml(r.label || "")}</div>
-              <div class="rv-value">${escapeHtml(r.value || "")}</div>
-            </div>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-
-    <details>
-      <summary>利用規約・同意事項</summary>
-      <div class="terms">${escapeHtml(state.server?.termsText || "")}</div>
-    </details>
-
-    <label class="choice" style="margin-top:12px;">
-      <input type="checkbox" id="agreeChk" />
-      <div>上記内容を確認し、同意しました</div>
-    </label>
-
-    <div class="err" id="reviewErr" style="display:none;"></div>
-  `;
-
-  // 最終送信は「同意チェック必須」にする
-  // ※ btnNext は「確認画面中=送信」なので、ここでガードを付ける
-  const origSubmitAll = submitAll;
-  submitAll = async function(){
-    const agree = document.getElementById("agreeChk");
-    if (!agree || !agree.checked){
-      const box = document.getElementById("reviewErr");
-      if (box){
-        box.style.display = "block";
-        box.textContent = "送信には同意チェックが必要です。";
-      }
-      return;
-    }
-    // もとの submitAll を呼ぶ
-    submitAll = origSubmitAll;
-    return origSubmitAll();
-  };
-}
-
-function escapeHtml(str){
-  return String(str)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#39;");
-}
-
 // ====== render ======
 function render(){
   clearError();
   cleanupByBranch();
-
-function scrollToTopAfterRender(){
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
-  });
-}
 
   const totalPages = pages.length;
   if (state.pageIndex < 0) state.pageIndex = 0;
@@ -1221,6 +1156,11 @@ async function submitAll(){
     return;
   }
 
+  if (!state.formToken) {
+    showError("初期化に失敗しました。ページを更新してから再度お試しください。");
+    return;
+  }
+
   // 全ページチェック
   for (let i=0;i<pages.length;i++){
     const prev = state.pageIndex;
@@ -1238,17 +1178,28 @@ async function submitAll(){
 
   cleanupByBranch();
 
+  const sendAnswers = (typeof structuredClone === "function")
+    ? structuredClone(state.answers)
+    : JSON.parse(JSON.stringify(state.answers));
+
   // GAS側へ渡すための整形（kimonoRental）
-  const items = state.answers.kimonoRentalItems || [];
-  state.answers.kimonoRental = items.includes("その他")
-    ? items.map(x => x === "その他" ? `その他（${state.answers.kimonoRentalOther || ""}）` : x)
+  const items = sendAnswers.kimonoRentalItems || [];
+  sendAnswers.kimonoRental = items.includes("その他")
+    ? items.map(x => x === "その他" ? `その他（${sendAnswers.kimonoRentalOther || ""}）` : x)
     : items;
 
+  ensureHoneypotInput();
+  const hpEl = document.querySelector('input[name="website"][data-honeypot="1"]');
   const payload = {
-    openedAtMs,
-    answers: state.answers
+    formToken: state.formToken || "",
+    website: hpEl ? hpEl.value : "",
+    answers: sendAnswers
   };
 
+  const prevNextDisabled = btnNext.disabled;
+  const prevBackDisabled = btnBack.disabled;
+  btnNext.disabled = true;
+  btnBack.disabled = true;
   toggleLoading(true);
 
   try {
@@ -1261,47 +1212,16 @@ async function submitAll(){
     const json = await res.json();
     if (!json.ok) throw new Error(json.message || "送信に失敗しました");
 
-    toggleLoading(false);
     pageCard.style.display = "none";
     doneCard.style.display = "block";
     doneId.textContent = json.submissionId ? `送信ID：${json.submissionId}` : "";
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   } catch (e) {
-    toggleLoading(false);
     showError(`送信に失敗しました。\n${e && e.message ? e.message : e}`);
+  } finally {
+    toggleLoading(false);
+    btnNext.disabled = prevNextDisabled;
+    btnBack.disabled = prevBackDisabled;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
