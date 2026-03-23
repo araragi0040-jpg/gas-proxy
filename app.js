@@ -18,7 +18,6 @@ window.addEventListener("unhandledrejection", (e) => {
 
 const state = {
   pageIndex: 0,
-  lastPageIndex: 0,
   server: { termsVersion:"", minSubmitSeconds:3 },
   formToken: "",
   answers: {
@@ -100,7 +99,6 @@ const PLAN_OUTCALL = [
   // まずは仮設定で即表示
   state.server = { termsVersion:"", minSubmitSeconds:3 };
   state.formToken = "";
-  state.isReview = false;
   render();
   ensureHoneypotInput();
 
@@ -834,64 +832,6 @@ if (page.fields.includes("review")){
 }
 }
 
-function buildReviewText(){
-  const a = state.answers;
-  const lines = [];
-
-  lines.push(`■ お名前：${a.name || ""}`);
-  lines.push(`■ メール：${a.email || ""}`);
-  lines.push(`■ 電話：${formatPhone(a.phone) || ""}`);
-
-  const contents = Array.isArray(a.shootingContents) ? a.shootingContents : [];
-  const display = contents.map(x => x === "その他" ? `その他（${a.shootingContentsOther || ""}）` : x);
-  lines.push(`■ 撮影内容：${display.join(", ")}`);
-
-  if (a.dressingNeed && a.dressingNeed !== "無し") {
-    lines.push(`■ 着付けヘアセットご希望：${a.dressingNeed}`);
-  }
-
-  const items = Array.isArray(a.kimonoRentalItems) ? a.kimonoRentalItems : [];
-  if (items.length) {
-    if (items.includes("無し")) lines.push(`■ 着物レンタル：無し`);
-    else {
-      lines.push(`■ 着物レンタル：有り`);
-      const detail = items.map(x => x === "その他" ? `その他（${a.kimonoRentalOther || ""}）` : x);
-      lines.push(`            ┗${detail.join(", ")}`);
-    }
-  }
-
-  const isSet = String(a.planType || "").startsWith("セットプラン");
-  if (!isSet) {
-    if (String(a.planType || "").startsWith("写真館撮影") && a.planStudio) {
-      lines.push(`■ プラン：写真館撮影\n                       ┗${a.planStudio}`);
-    } else if (String(a.planType || "").startsWith("出張撮影") && a.planOutcall) {
-      lines.push(`■ プラン：出張撮影\n                       ┗${a.planOutcall}`);
-    } else {
-      lines.push(`■ プラン：${a.planType || ""}`);
-    }
-  } else {
-    lines.push(`■ プラン：${a.planType || ""}`);
-    const cleaned = (Array.isArray(a.planSet) ? a.planSet : []).filter(x => x && !String(x).startsWith("▼"));
-    const studioItems = cleaned.filter(x => PLAN_STUDIO.includes(x));
-    const outcallItems = cleaned.filter(x => PLAN_OUTCALL.includes(x));
-    if (studioItems.length){
-      lines.push(`                  ┗写真館撮影`);
-      studioItems.forEach(x => lines.push(`                    ・${x}`));
-    }
-    if (outcallItems.length){
-      lines.push(`                  ┗出張撮影`);
-      outcallItems.forEach(x => lines.push(`                    ・${x}`));
-    }
-  }
-
-  if (Array.isArray(a.options) && a.options.length) {
-    lines.push(`■ パネル/アルバム：`);
-    a.options.forEach(x => lines.push(`     ${x}`));
-  }
-
-  return lines.join("\n");
-}
-
 // レビューHTML
 function esc(s){
   return String(s ?? "")
@@ -916,16 +856,17 @@ function buildReviewHTML(){
     items.push(rowL1("撮影内容", display.join("、"),"mobile-break"));
   }
 
-// 着付け
-{
-  const detailText = String(a.dressingDetail || "").trim();
-  items.push(
-    rowL1(
-      "着付けされる希望者の詳細",
-      detailText || "無し","mobile-break"
-    )
-  );
-}
+  // 着付け
+  {
+    items.push(rowL1("着付けヘアセットご希望", a.dressingNeed || "無し", "mobile-break"));
+
+    if (a.dressingNeed && a.dressingNeed !== "無し") {
+      const detailText = String(a.dressingDetail || "").trim();
+      if (detailText) {
+        items.push(rowL2(detailText, "kimono"));
+      }
+    }
+  }
 
   // 着物レンタル（★このブロックが画像の1つ目の対象）
   {
@@ -1042,11 +983,16 @@ function validatePage(){
     if (!isEmailValid(a.email)) return "メールアドレスの形が違うかもです（例：aaa@bbb.com）";
   }
   if (p.fields.includes("name") && !String(a.name||"").trim()) return "お名前は必須です。";
-  if (p.fields.includes("postal") && !String(a.postal||"").trim()) return "郵便番号は必須です。";
+  if (p.fields.includes("postal")){
+    const postal = String(a.postal || "").trim();
+    if (!postal) return "郵便番号は必須です。";
+    if (!/^\d{3}-?\d{4}$/.test(postal)) return "郵便番号の形式が違います（例：123-4567）。";
+  }
   if (p.fields.includes("address") && !String(a.address||"").trim()) return "ご住所は必須です。";
   if (p.fields.includes("phone")){
     if (!String(a.phone||"").trim()) return "お電話番号は必須です。";
     a.phone = formatPhone(a.phone);
+    if (!/^\d{9,15}$/.test(a.phone)) return "お電話番号は9〜15桁の数字で入力してください。";
   }
 
   if (p.fields.includes("shootingContents")){
@@ -1086,7 +1032,12 @@ function validatePage(){
     if (!String(a.planOutcall||"").trim()) return "出張プランを選択してください。";
   }
   if (p.fields.includes("planSet") && String(a.planType||"").startsWith("セットプラン")){
-    if (!Array.isArray(a.planSet) || a.planSet.length === 0) return "セットプランの中身（写真館＋出張）を選択してください。";
+    const selected = Array.isArray(a.planSet) ? a.planSet : [];
+    const hasStudio = selected.some(x => PLAN_STUDIO.includes(x));
+    const hasOutcall = selected.some(x => PLAN_OUTCALL.includes(x));
+    if (!hasStudio && !hasOutcall) return "セットプランでは、写真館撮影プランと出張撮影プランをそれぞれ1つ以上選択してください。";
+    if (!hasStudio) return "セットプランでは、写真館撮影プランを1つ以上選択してください。";
+    if (!hasOutcall) return "セットプランでは、出張撮影プランを1つ以上選択してください。";
   }
 
   if (p.fields.includes("paymentMethod") && !String(a.paymentMethod||"").trim()) return "お支払い方法は必須です。";
@@ -1107,15 +1058,6 @@ function validatePage(){
 // ====== ボタン ======
 btnBack.addEventListener("click", ()=>{
   clearError();
-
-  // 確認画面中なら、確認画面を閉じて最終ページに戻る
-  if (state.isReview){
-    state.isReview = false;
-    render();
-    scrollToTopAfterRender();
-    return;
-  }
-
   state.pageIndex--;
   render();
   scrollToTopAfterRender();
@@ -1124,22 +1066,14 @@ btnBack.addEventListener("click", ()=>{
 btnNext.addEventListener("click", ()=>{
   clearError();
 
-  // 確認画面中なら「送信」
-  if (state.isReview){
-    submitAll();
-    return;
-  }
-
   const msg = validatePage();
   if (msg) return showError(msg);
 
   const last = state.pageIndex === pages.length - 1;
 
-  // 最終ページなら「確認画面へ」
+  // 最終ページならそのまま送信
   if (last){
-    state.isReview = true;
-    render();
-    scrollToTopAfterRender();
+    submitAll();
     return;
   }
 
@@ -1181,12 +1115,6 @@ async function submitAll(){
   const sendAnswers = (typeof structuredClone === "function")
     ? structuredClone(state.answers)
     : JSON.parse(JSON.stringify(state.answers));
-
-  // GAS側へ渡すための整形（kimonoRental）
-  const items = sendAnswers.kimonoRentalItems || [];
-  sendAnswers.kimonoRental = items.includes("その他")
-    ? items.map(x => x === "その他" ? `その他（${sendAnswers.kimonoRentalOther || ""}）` : x)
-    : items;
 
   ensureHoneypotInput();
   const hpEl = document.querySelector('input[name="website"][data-honeypot="1"]');
