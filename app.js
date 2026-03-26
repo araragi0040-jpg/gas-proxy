@@ -6,6 +6,8 @@ const openedAtMs = Date.now();
 const API_BASE = "https://gas-proxy-kappa.vercel.app/api/forms";
 
 window.addEventListener("error", (e) => {
+  // DevTools表示時に発生しがちなResizeObserver系は無視（無限更新防止）
+  if (String(e?.message || "").includes("ResizeObserver")) return;
   const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
   console.error(msg, e.error);
   showError(msg);
