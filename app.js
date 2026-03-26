@@ -33,6 +33,8 @@ const state = {
     shootingPlace: "",
     participants: "",
     mainPersonName: "",
+    preferredDate: "",
+    preferredTime: "",
 
     dressingNeed: "",
     dressingDetail: "",
@@ -57,7 +59,6 @@ const state = {
 
     privacyAgree: false,
     cancelAgree: false,
-    otherAgree: false,
   }
 };
 
@@ -84,14 +85,14 @@ const pages = [
 
 // セット候補
 const PLAN_STUDIO = [
-  "【１番人気🥇】プレミアムプラン (全データ/A4木製ガラスパネル ) ¥57,500→¥46,500",
+  "【１番人気🥇】プレミアムプラン (全データ/A4木製ガラスパネル) ¥57,500→¥46,500",
   "スタンダードプラン (全データ込み) ¥41,000",
   "ライトプラン (5データのみ) ¥30,000 ※データはお客様セレクト"
 ];
 const PLAN_OUTCALL = [
   "プレミアムプラン (全データ/2L木製ガラスパネル/アルバム10P Mサイズ) ¥75,000→¥69,800",
-  "【１番人気🥇】スタンダードプラン(全データ/2L木製ガラスパネル/2面台紙) ¥65,000円→¥59,800",
-  "スマートプラン(全データ/2L木製ガラスパネル) ￥40,000"
+  "【１番人気🥇】スタンダードプラン(全データ/2L木製ガラスパネル/2面台紙) ¥65,000→¥59,800",
+  "スマートプラン(全データ/2L木製ガラスパネル) ¥40,000"
 ];
 
 // ====== 初期化 ======
@@ -200,6 +201,9 @@ function cleanupByBranch(){
     a.dressingAddressChoice = "";
     a.dressingAddressOther = "";
     a.parkingSpace = "";
+  } else {
+    a.preferredDate = "";
+    a.preferredTime = "";
   }
 
   // 当写真館なら住所/駐車なし
@@ -468,10 +472,34 @@ if (page.fields.includes("dressingNeed")) {
 
   // ✅ カレンダー（着付け無しの時だけ）
   if (state.answers.dressingNeed === "無し") {
+    const dateBox = makeInputBox(
+      "ご希望日",
+      true,
+      "カレンダーで空き状況を確認し、日付を選択してください"
+    );
+    const dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.value = state.answers.preferredDate || "";
+    dateInput.addEventListener("input", ()=> state.answers.preferredDate = dateInput.value);
+    dateBox.appendChild(dateInput);
+    pageRoot.appendChild(dateBox);
+
+    const timeBox = makeInputBox(
+      "ご希望時間帯",
+      true,
+      "例：午前希望 / 10:00頃 / 13:00以降 など"
+    );
+    const timeInput = document.createElement("input");
+    timeInput.type = "text";
+    timeInput.value = state.answers.preferredTime || "";
+    timeInput.addEventListener("input", ()=> state.answers.preferredTime = timeInput.value);
+    timeBox.appendChild(timeInput);
+    pageRoot.appendChild(timeBox);
+
     const calBox = makeInputBox(
-      "撮影日予約（着付け無しの場合のみこちらから予約。着付け有りの場合は別途調整いたします。）",
+      "空き状況確認用カレンダー（着付け無しの場合）",
       false,
-      "空いている日時をご確認の上、カレンダーから直接ご予約ください。"
+      "空いている日時をご確認のうえ、上の入力欄にご希望日時をご記入ください。"
     );
 
     const iframe = document.createElement("iframe");
@@ -766,17 +794,8 @@ if (page.fields.includes("dressingNeed")) {
 撮影日の8〜14日前　撮影料金の30%`;
     details2.appendChild(sum2); details2.appendChild(body2);
 
-    const details3 = document.createElement("details");
-    const sum3 = document.createElement("summary");
-    sum3.textContent = "その他確認事項（タップで表示）";
-    const body3 = document.createElement("div");
-    body3.className = "terms";
-    body3.textContent = "（ここは必要ならあなたの文章に差し替えOK）";
-    details3.appendChild(sum3); details3.appendChild(body3);
-
     box.appendChild(details1);
     box.appendChild(details2);
-    box.appendChild(details3);
 
     function addAgree(key, labelText){
       const c = document.createElement("label"); c.className="choice";
@@ -789,7 +808,6 @@ if (page.fields.includes("dressingNeed")) {
 
     addAgree("privacyAgree", "個人情報の取扱いに同意します");
     addAgree("cancelAgree", "キャンセル規定に同意します");
-    addAgree("otherAgree", "その他確認事項に同意します");
 
     pageRoot.appendChild(box);
   }
@@ -1006,6 +1024,10 @@ function validatePage(){
   if (p.fields.includes("mainPersonName") && !String(a.mainPersonName||"").trim()) return "主役のお名前/英字表記は必須です。";
 
   if (p.fields.includes("dressingNeed") && !String(a.dressingNeed||"").trim()) return "着付け希望は必須です。";
+  if (p.fields.includes("dressingNeed") && a.dressingNeed === "無し"){
+    if (!String(a.preferredDate||"").trim()) return "着付け無しの場合はご希望日を入力してください。";
+    if (!String(a.preferredTime||"").trim()) return "着付け無しの場合はご希望時間帯を入力してください。";
+  }
   if (p.fields.includes("dressingDetail") && a.dressingNeed && a.dressingNeed !== "無し"){
     if (!String(a.dressingDetail||"").trim()) return "着付け詳細は必須です。";
     if (!String(a.dressingPlace||"").trim()) return "着付け希望場所は必須です。";
@@ -1047,8 +1069,8 @@ function validatePage(){
   }
 
   if (p.fields.includes("agreements")){
-    if (!a.privacyAgree || !a.cancelAgree || !a.otherAgree) {
-      return "個人情報・キャンセル規定・その他確認事項への同意が必要です。";
+    if (!a.privacyAgree || !a.cancelAgree) {
+      return "個人情報・キャンセル規定への同意が必要です。";
     }
   }
 
@@ -1137,7 +1159,13 @@ async function submitAll(){
       body: JSON.stringify(payload),
     });
 
-    const json = await res.json();
+    const text = await res.text();
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      throw new Error("サーバー応答の解析に失敗しました。時間をおいて再度お試しください。");
+    }
     if (!json.ok) throw new Error(json.message || "送信に失敗しました");
 
     pageCard.style.display = "none";
