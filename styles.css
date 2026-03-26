@@ -30,7 +30,7 @@
 
   /* ・（L3）の位置調整。plan は「┗行の値1文字目中央」に合わせる用途 */
   --indent-kimono-l3: 65px;
-  --indent-plan-l3: 57px;
+  --indent-plan-l3: 56px;
   --indent-panel-l3: 48px;
 }
 
