@@ -940,18 +940,11 @@ if (page.fields.includes("review")){
   `;
   outerBox.appendChild(lead);
 
-  // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-  // 内枠（回答内容一覧）
-  // ＝＝＝＝＝＝＝＝＝＝＝＝＝＝
-  const innerBox = document.createElement("div");
-  innerBox.className = "confirmInnerBox";
-
   const rv = document.createElement("div");
   rv.className = "review";
   rv.innerHTML = buildReviewHTML();
 
-  innerBox.appendChild(rv);
-  outerBox.appendChild(innerBox);
+  outerBox.appendChild(rv);
 
   // 店名（外枠内）
   const brand = document.createElement("div");
