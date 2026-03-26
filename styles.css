@@ -17,11 +17,18 @@
   --shadow: 0 10px 30px rgba(0,0,0,.08);
   --radius: 18px;
 
-  /* review indents (desktop defaults) */
+  /* ===== 内容確認(review) 位置調整の基準値 =====
+     L2(┗) と L3(・) の水平方向位置を、上位行の値テキスト開始位置に合わせるための変数
+     ※ 下の grp-kimono / grp-plan / grp-panel で使用
+  */
+  /* ┗（着付け/着物レンタル配下） */
   --indent-kimono-l2: 35px;
+  /* ┗（プラン配下） */
   --indent-plan-l2: 35px;
+  /* ┗なし（■パネル/アルバム配下）の回答開始位置 */
   --indent-panel-l2: 18px;
 
+  /* ・（L3）の位置調整。plan は「┗行の値1文字目中央」に合わせる用途 */
   --indent-kimono-l3: 65px;
   --indent-plan-l3: 65px;
   --indent-panel-l3: 48px;
@@ -354,6 +361,7 @@ details > summary{
 }
 
 .rv-mark{
+  /* ■ / ┗ / ・ 記号列の幅（この値が記号の基準位置） */
   width: 12px;
   flex: 0 0 12px;
   text-align: center;
@@ -389,6 +397,7 @@ details > summary{
   background: #fff;
   border: 1px solid #ececec;
   border-radius: 8px;
+  /* 回答テキストの開始位置に影響（左8px） */
   padding: 2px 8px;
 }
 
@@ -408,6 +417,7 @@ details > summary{
 }
 
 .rv.mobile-break .rv-label{
+  /* 改行時、ラベルと値の1文字目開始位置を合わせる補正 */
   padding-left: 7px;
 }
 
@@ -429,7 +439,11 @@ details > summary{
   padding-left: 28px;
 }
 
-/* グループ別 */
+/* ===== グループ別の位置調整適用先 =====
+   grp-kimono: 着付け/着物レンタル配下
+   grp-plan  : プラン配下（┗, ・）
+   grp-panel : パネル/アルバム配下（┗なし行）
+*/
 .rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2); }
 .rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3); }
 
