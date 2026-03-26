@@ -141,15 +141,6 @@ body{
 h2{ margin: 0 0 10px; font-size: 16px; }
 .desc{ color: var(--muted); font-size: 13px; margin: 0 0 12px; line-height: 1.6; }
 
-/* 内側の回答枠 */
-.confirmInnerBox{
-  background:#f7f7f7;
-  border:1px solid #ddd;
-  border-radius:10px;
-  padding:16px;
-  margin-top:16px;
-}
-
 /* 店名 */
 .confirmBrand{
   margin-top:12px;
@@ -442,10 +433,6 @@ details > summary{
   display: block;
   margin-top: 2px;
 }
-
-  .confirmInnerBox{
-    padding: 12px;
-  }
 
   .review{
     font-size: 13px;
