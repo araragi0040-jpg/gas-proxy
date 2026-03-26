@@ -20,6 +20,9 @@ const state = {
   pageIndex: 0,
   server: { termsVersion:"", minSubmitSeconds:3 },
   formToken: "",
+  availableSlots: [],
+  slotsLoading: false,
+  slotsDate: "",
   answers: {
     email: "",
     name: "",
@@ -100,6 +103,9 @@ const PLAN_OUTCALL = [
   // まずは仮設定で即表示
   state.server = { termsVersion:"", minSubmitSeconds:3 };
   state.formToken = "";
+  state.availableSlots = [];
+  state.slotsLoading = false;
+  state.slotsDate = "";
   render();
   ensureHoneypotInput();
 
@@ -170,6 +176,63 @@ function rerenderAll(){
   render();
 }
 
+let slotsRequestSeq = 0;
+
+function normalizeSlots(list){
+  if (!Array.isArray(list)) return [];
+  return list
+    .map((v) => String(v || "").trim())
+    .filter((v) => /^\d{2}:00$/.test(v));
+}
+
+async function fetchSlots(dateStr){
+  const date = String(dateStr || "").trim();
+  if (!date) {
+    state.availableSlots = [];
+    state.slotsLoading = false;
+    state.slotsDate = "";
+    state.answers.preferredTime = "";
+    render();
+    return;
+  }
+
+  const reqId = ++slotsRequestSeq;
+  state.slotsLoading = true;
+  state.slotsDate = date;
+  state.availableSlots = [];
+  state.answers.preferredTime = "";
+  render();
+
+  try {
+    const res = await fetch(`${API_BASE}?action=slots&date=${encodeURIComponent(date)}`, {
+      method: "GET",
+      cache: "no-store"
+    });
+
+    const text = await res.text();
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      throw new Error("空き枠情報の取得に失敗しました。");
+    }
+    if (!json.ok) throw new Error(json.message || "空き枠情報の取得に失敗しました。");
+
+    if (reqId !== slotsRequestSeq) return;
+    state.availableSlots = normalizeSlots(json.slots);
+
+  } catch (e) {
+    if (reqId !== slotsRequestSeq) return;
+    state.availableSlots = [];
+    showError(`空き枠の取得に失敗しました。\n${e && e.message ? e.message : e}`);
+  } finally {
+    if (reqId === slotsRequestSeq) {
+      state.slotsLoading = false;
+      render();
+    }
+  }
+}
+
 // 電話：数字だけ
 function formatPhone(raw){
   return String(raw||"").replace(/\D/g,"");
@@ -204,6 +267,9 @@ function cleanupByBranch(){
   } else {
     a.preferredDate = "";
     a.preferredTime = "";
+    state.availableSlots = [];
+    state.slotsLoading = false;
+    state.slotsDate = "";
   }
 
   // 当写真館なら住所/駐車なし
@@ -480,20 +546,67 @@ if (page.fields.includes("dressingNeed")) {
     const dateInput = document.createElement("input");
     dateInput.type = "date";
     dateInput.value = state.answers.preferredDate || "";
-    dateInput.addEventListener("input", ()=> state.answers.preferredDate = dateInput.value);
+    dateInput.addEventListener("change", ()=>{
+      state.answers.preferredDate = dateInput.value;
+      state.answers.preferredTime = "";
+      if (!dateInput.value) {
+        state.availableSlots = [];
+        state.slotsLoading = false;
+        state.slotsDate = "";
+        render();
+        return;
+      }
+      fetchSlots(dateInput.value);
+    });
     dateBox.appendChild(dateInput);
     pageRoot.appendChild(dateBox);
 
     const timeBox = makeInputBox(
       "ご希望時間帯",
       true,
-      "例：午前希望 / 10:00頃 / 13:00以降 など"
+      "日付を選ぶと、空き枠のみ選択できます（90分枠）"
     );
-    const timeInput = document.createElement("input");
-    timeInput.type = "text";
-    timeInput.value = state.answers.preferredTime || "";
-    timeInput.addEventListener("input", ()=> state.answers.preferredTime = timeInput.value);
-    timeBox.appendChild(timeInput);
+    const timeSelect = document.createElement("select");
+    const dateSelected = !!String(state.answers.preferredDate || "").trim();
+    const loading = state.slotsLoading && state.slotsDate === state.answers.preferredDate;
+    const slots = Array.isArray(state.availableSlots) ? state.availableSlots : [];
+
+    if (!dateSelected) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "先にご希望日を選択してください";
+      timeSelect.appendChild(opt);
+      timeSelect.disabled = true;
+    } else if (loading) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "空き状況を確認中...";
+      timeSelect.appendChild(opt);
+      timeSelect.disabled = true;
+    } else if (slots.length === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "この日は空きがありません。別の日をお選びください。";
+      timeSelect.appendChild(opt);
+      timeSelect.disabled = true;
+    } else {
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.textContent = "時間帯を選択してください";
+      timeSelect.appendChild(placeholder);
+
+      slots.forEach((slot) => {
+        const opt = document.createElement("option");
+        opt.value = slot;
+        opt.textContent = slot;
+        timeSelect.appendChild(opt);
+      });
+      timeSelect.value = slots.includes(state.answers.preferredTime) ? state.answers.preferredTime : "";
+      timeSelect.disabled = false;
+    }
+
+    timeSelect.addEventListener("change", ()=> state.answers.preferredTime = timeSelect.value);
+    timeBox.appendChild(timeSelect);
     pageRoot.appendChild(timeBox);
 
     const calBox = makeInputBox(
@@ -1026,7 +1139,12 @@ function validatePage(){
   if (p.fields.includes("dressingNeed") && !String(a.dressingNeed||"").trim()) return "着付け希望は必須です。";
   if (p.fields.includes("dressingNeed") && a.dressingNeed === "無し"){
     if (!String(a.preferredDate||"").trim()) return "着付け無しの場合はご希望日を入力してください。";
-    if (!String(a.preferredTime||"").trim()) return "着付け無しの場合はご希望時間帯を入力してください。";
+    if (!String(a.preferredTime||"").trim()) return "着付け無しの場合はご希望時間帯を選択してください。";
+    if (state.slotsLoading && state.slotsDate === a.preferredDate) return "空き状況の確認完了後にご希望時間帯を選択してください。";
+    if (state.slotsDate !== a.preferredDate) return "ご希望日の空き枠を確認してから時間帯を選択してください。";
+    if (!Array.isArray(state.availableSlots) || !state.availableSlots.includes(a.preferredTime)) {
+      return "ご希望時間帯は表示された空き枠から選択してください。";
+    }
   }
   if (p.fields.includes("dressingDetail") && a.dressingNeed && a.dressingNeed !== "無し"){
     if (!String(a.dressingDetail||"").trim()) return "着付け詳細は必須です。";
