@@ -5,17 +5,36 @@ const openedAtMs = Date.now();
 // ★Vercel経由で叩く
 const API_BASE = "https://gas-proxy-kappa.vercel.app/api/forms";
 
-window.addEventListener("error", (e) => {
-  // DevTools表示時に発生しがちなResizeObserver系は無視（無限更新防止）
-  if (String(e?.message || "").includes("ResizeObserver")) return;
-  const msg = `JSエラー:\n${e.message}\n${e.filename}:${e.lineno}`;
-  console.error(msg, e.error);
+let lastGlobalErrorMsg = "";
+let lastGlobalErrorAt = 0;
+
+function isIgnorableBrowserError_(raw){
+  const s = String(raw || "");
+  return (
+    s.includes("ResizeObserver loop completed with undelivered notifications") ||
+    s.includes("ResizeObserver loop limit exceeded")
+  );
+}
+
+function reportGlobalError_(label, rawMessage, detail){
+  if (isIgnorableBrowserError_(rawMessage)) return;
+  const msg = `${label}:\n${rawMessage || "不明なエラー"}`;
+  const now = Date.now();
+  // 同一エラーの短時間連打でDOM更新が連鎖しないように抑制
+  if (msg === lastGlobalErrorMsg && (now - lastGlobalErrorAt) < 1500) return;
+  lastGlobalErrorMsg = msg;
+  lastGlobalErrorAt = now;
+  console.error(msg, detail);
   showError(msg);
+}
+
+window.addEventListener("error", (e) => {
+  const rawMessage = `${e?.message || ""}\n${e?.filename || ""}:${e?.lineno || ""}`;
+  reportGlobalError_("JSエラー", rawMessage, e?.error);
 });
 window.addEventListener("unhandledrejection", (e) => {
-  const msg = `Promiseエラー:\n${e.reason?.message || e.reason}`;
-  console.error(msg, e.reason);
-  showError(msg);
+  const reason = e?.reason?.message || e?.reason;
+  reportGlobalError_("Promiseエラー", reason, e?.reason);
 });
 
 const state = {
