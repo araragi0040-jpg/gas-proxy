@@ -141,6 +141,15 @@ body{
 h2{ margin: 0 0 10px; font-size: 16px; }
 .desc{ color: var(--muted); font-size: 13px; margin: 0 0 12px; line-height: 1.6; }
 
+/* 内側の回答枠 */
+.confirmInnerBox{
+  background:#f7f7f7;
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:16px;
+  margin-top:16px;
+}
+
 /* 店名 */
 .confirmBrand{
   margin-top:12px;
@@ -376,10 +385,7 @@ details > summary{
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: normal;
-  background: #fff;
-  border: 1px solid #ececec;
-  border-radius: 8px;
-  padding: 2px 8px;
+  padding: 0;
 }
 
 .rv-value-l1{
@@ -432,6 +438,10 @@ details > summary{
 .rv.mobile-break .rv-value-l1{
   display: block;
   margin-top: 2px;
+}
+
+.confirmInnerBox{
+  padding: 12px;
 }
 
   .review{
