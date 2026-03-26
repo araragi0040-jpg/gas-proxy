@@ -22,15 +22,15 @@
      ※ 下の grp-kimono / grp-plan / grp-panel で使用
   */
   /* ┗（着付け/着物レンタル配下） */
-  --indent-kimono-l2: 35px;
+  --indent-kimono-l2: 25px;
   /* ┗（プラン配下） */
-  --indent-plan-l2: 35px;
+  --indent-plan-l2: 25px;
   /* ┗なし（■パネル/アルバム配下）の回答開始位置 */
   --indent-panel-l2: 18px;
 
   /* ・（L3）の位置調整。plan は「┗行の値1文字目中央」に合わせる用途 */
   --indent-kimono-l3: 65px;
-  --indent-plan-l3: 65px;
+  --indent-plan-l3: 45px;
   --indent-panel-l3: 48px;
 }
 
@@ -431,10 +431,12 @@ details > summary{
   border-top: 1px solid #eee;
 }
 
+/* ┗の行位置決め */
 .rv-l2{
   padding-left: 16px;
 }
 
+/* ・の行位置決め */
 .rv-l3{
   padding-left: 28px;
 }
