@@ -356,6 +356,7 @@ details > summary{
 .rv-mark{
   width: 14px;
   flex: 0 0 14px;
+  text-align: center;
 }
 
 .rv-body{
@@ -385,7 +386,10 @@ details > summary{
   word-break: break-word;
   overflow-wrap: anywhere;
   white-space: normal;
-  padding: 0;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  padding: 2px 8px;
 }
 
 .rv-value-l1{
@@ -438,6 +442,10 @@ details > summary{
 .rv.mobile-break .rv-value-l1{
   display: block;
   margin-top: 2px;
+}
+
+.rv.mobile-break .rv-label{
+  padding-left: 7px;
 }
 
 .confirmInnerBox{
