@@ -18,12 +18,12 @@
   --radius: 18px;
 
   /* review indents (desktop defaults) */
-  --indent-kimono-l2: 124px;
-  --indent-plan-l2: 78px;
+  --indent-kimono-l2: 131px;
+  --indent-plan-l2: 92px;
   --indent-panel-l2: 21px;
 
   --indent-kimono-l3: 64px;
-  --indent-plan-l3: 105px;
+  --indent-plan-l3: 118px;
   --indent-panel-l3: 8px;
 }
 
@@ -493,13 +493,13 @@ details > summary{
   }
 
   :root{
-  --indent-kimono-l2: 20px;
-  --indent-plan-l2: 20px;
-  --indent-panel-l2: 20px;
+  --indent-kimono-l2: 33px;
+  --indent-plan-l2: 33px;
+  --indent-panel-l2: 33px;
 
-  --indent-kimono-l3: 10px;
-  --indent-plan-l3: 43px;
-  --indent-panel-l3: 14px;
+  --indent-kimono-l3: 29px;
+  --indent-plan-l3: 29px;
+  --indent-panel-l3: 29px;
 }
 
 .rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2) !important; }
