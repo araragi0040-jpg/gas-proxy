@@ -22,15 +22,15 @@
      ※ 下の grp-kimono / grp-plan / grp-panel で使用
   */
   /* ┗（着付け/着物レンタル配下） */
-  --indent-kimono-l2: 25px;
+  --indent-kimono-l2: 27px;
   /* ┗（プラン配下） */
-  --indent-plan-l2: 25px;
+  --indent-plan-l2: 27px;
   /* ┗なし（■パネル/アルバム配下）の回答開始位置 */
-  --indent-panel-l2: 18px;
+  --indent-panel-l2: 20px;
 
   /* ・（L3）の位置調整。plan は「┗行の値1文字目中央」に合わせる用途 */
   --indent-kimono-l3: 65px;
-  --indent-plan-l3: 45px;
+  --indent-plan-l3: 50px;
   --indent-panel-l3: 48px;
 }
 
