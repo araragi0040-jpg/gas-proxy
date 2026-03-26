@@ -18,13 +18,13 @@
   --radius: 18px;
 
   /* review indents (desktop defaults) */
-  --indent-kimono-l2: 131px;
-  --indent-plan-l2: 92px;
-  --indent-panel-l2: 21px;
+  --indent-kimono-l2: 35px;
+  --indent-plan-l2: 35px;
+  --indent-panel-l2: 18px;
 
-  --indent-kimono-l3: 64px;
-  --indent-plan-l3: 118px;
-  --indent-panel-l3: 8px;
+  --indent-kimono-l3: 65px;
+  --indent-plan-l3: 65px;
+  --indent-panel-l3: 48px;
 }
 
 *{ box-sizing:border-box; }
@@ -354,8 +354,8 @@ details > summary{
 }
 
 .rv-mark{
-  width: 14px;
-  flex: 0 0 14px;
+  width: 12px;
+  flex: 0 0 12px;
   text-align: center;
 }
 
@@ -397,6 +397,20 @@ details > summary{
   min-width: 0;
 }
 
+/* 改行表示時（PC/スマホ共通） */
+.rv.mobile-break .rv-body-l1{
+  display: block;
+}
+
+.rv.mobile-break .rv-value-l1{
+  display: block;
+  margin-top: 2px;
+}
+
+.rv.mobile-break .rv-label{
+  padding-left: 7px;
+}
+
 /* 階層 */
 .rv-l1{
   padding-left: 0;
@@ -434,20 +448,6 @@ details > summary{
   スマホ表示調整
 ========================= */
 @media (max-width: 480px){
-/* スマホ時だけ、特定の親行は縦並びにする */
-.rv.mobile-break .rv-body-l1{
-  display: block;
-}
-
-.rv.mobile-break .rv-value-l1{
-  display: block;
-  margin-top: 2px;
-}
-
-.rv.mobile-break .rv-label{
-  padding-left: 7px;
-}
-
 .confirmInnerBox{
   padding: 12px;
 }
@@ -485,22 +485,6 @@ details > summary{
     margin-top: 6px;
     line-height: 1.7;
   }
-
-    /* ┗ の列を広げる */
-  .rv-mark{
-    width:12px;
-    flex:0 0 12px;
-  }
-
-  :root{
-  --indent-kimono-l2: 33px;
-  --indent-plan-l2: 33px;
-  --indent-panel-l2: 33px;
-
-  --indent-kimono-l3: 29px;
-  --indent-plan-l3: 29px;
-  --indent-panel-l3: 29px;
-}
 
 .rv-l2.grp-kimono{ padding-left: var(--indent-kimono-l2) !important; }
 .rv-l3.grp-kimono{ padding-left: var(--indent-kimono-l3) !important; }
